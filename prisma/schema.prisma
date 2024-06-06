@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id           Int            @id @default(autoincrement())
+  name         String
+  photo        String?
+  statusId     Int            @map("status_id")
+  status       ProfileStatus  @relation(fields: [statusId], references: [id])
+  ProfileTag   ProfileTag[]
+  ProfileAsset ProfileAsset[]
+  ProfileRoute ProfileRoute[]
+
+  @@map("profiles")
+}
+
+model ProfileStatus {
+  id       Int       @id @default(autoincrement())
+  status   String
+  profiles Profile[]
+
+  @@map("profile_statuses")
+}
+
+model Tag {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  ProfileTag ProfileTag[]
+
+  @@map("tags")
+}
+
+model ProfileTag {
+  id        Int     @id @default(autoincrement())
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId Int     @map("profile_id")
+  tag       Tag     @relation(fields: [tagId], references: [id])
+  tagId     Int     @map("tag_id")
+
+  @@map("profile_tags")
+}
+
+model AssetType {
+  id           Int            @id @default(autoincrement())
+  type         String
+  ProfileAsset ProfileAsset[]
+
+  @@map("asset_types")
+}
+
+model ProfileAsset {
+  id        Int       @id @default(autoincrement())
+  url       String
+  profileId Int       @map("profile_id")
+  profile   Profile   @relation(fields: [profileId], references: [id])
+  typeId    Int       @map("type_id")
+  type      AssetType @relation(fields: [typeId], references: [id])
+
+  @@map("profile_assets")
+}
+
+model Route {
+  id       Int    @id @default(autoincrement())
+  location String
+  lang     String
+  height   String
+  ProfileRoute ProfileRoute[]
+
+  @@map("routes")
+}
+
+model ProfileRoute {
+  id          Int     @id @default(autoincrement())
+  profile     Profile @relation(fields: [profileId], references: [id])
+  profileId   Int     @map("profile_id")
+  route       Route   @relation(fields: [routeId], references: [id])
+  routeId     Int     @map("route_id")
+  orderNumber Int     @map("order_number")
+
+  @@map("profile_routes")
+}
