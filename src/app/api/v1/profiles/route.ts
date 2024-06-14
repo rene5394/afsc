@@ -2,11 +2,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 
+const CreateProfileAssetSchema = z.object({
+  url: z.string().url(),
+  typeId: z.number(),
+})
+
+const CreateProfileRouteSchema = z.object({
+  location: z.string(),
+  latitude: z.string(),
+  longitude: z.string(),
+  orderNumber: z.number(),
+})
+
 const CreateProfileSchema = z.object({
   name: z.string(),
   photo: z.string().optional(),
   statusId: z.number(),
   tagIds: z.array(z.number()),
+  assets: z.array(CreateProfileAssetSchema).optional(),
+  routes: z.array(CreateProfileRouteSchema).optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -23,36 +37,76 @@ export async function POST(req: NextRequest) {
     }
 
     const profile = validationResult.data
-    const { name, photo, statusId, tagIds } = profile
-    //const createdProfile = await prisma.profile.create({ data: profile })
+    const { name, photo, statusId, tagIds, assets, routes } = profile
 
     const createdProfile = await prisma.$transaction(async (prisma) => {
-      const createdProfile = await prisma.profile.create({
+      const newProfile = await prisma.profile.create({
         data: {
           name,
           photo,
           statusId,
+          ProfileTag: {
+            create: tagIds.map((tagId) => ({
+              tagId,
+            })),
+          },
+          ProfileAsset: assets ? {
+            create: assets.map((asset) => ({
+              url: asset.url,
+              typeId: asset.typeId,
+            })),
+          } : undefined,
+          ProfileRoute: routes ? {
+            create: routes.map((route) => ({
+              location: route.location,
+              latitude: route.latitude,
+              longitude: route.longitude,
+              orderNumber: route.orderNumber,
+            })),
+          } : undefined,
+        },
+        include: {
+          ProfileTag: {
+            include: {
+              tag: true,
+            },
+          },
+          ProfileAsset: true,
+          ProfileRoute: true,
         },
       })
 
-      const profileTags = tagIds.map((tagId) => ({
-        profileId: createdProfile.id,
-        tagId,
-      }))
-
-      await prisma.profileTag.createMany({
-        data: profileTags,
-      })
-
-      return createdProfile
+      return newProfile
     })
 
+    const transformedProfile = {
+      id: createdProfile.id,
+      name: createdProfile.name,
+      photo: createdProfile.photo,
+      statusId: createdProfile.statusId,
+      tags: createdProfile.ProfileTag.map((profileTag) => ({
+        id: profileTag.tag.id,
+        name: profileTag.tag.name,
+      })),
+      assets: createdProfile.ProfileAsset.map((asset) => ({
+        id: asset.id,
+        url: asset.url,
+        typeId: asset.typeId,
+      })),
+      routes: createdProfile.ProfileRoute.map((route) => ({
+        id: route.id,
+        location: route.location,
+        latitude: route.latitude,
+        longitude: route.longitude,
+        orderNumber: route.orderNumber,
+      })),
+    }
+
     return NextResponse.json(
-      { status: 201, message: 'Profile created', data: createdProfile },
+      { status: 201, message: 'Profile created', data: transformedProfile },
       { status: 201 }
     )
   } catch (error) {
-    console.log('ERROR', error)
     return NextResponse.json(
       { status: 500, message: 'Internal Server Error' },
       { status: 500 }
@@ -63,7 +117,6 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const params = req.nextUrl.searchParams
-    console.log('PARAMS', params)
     const prisma = new PrismaClient()
     const profiles = await prisma.profile.findMany({
       include: {
@@ -72,6 +125,8 @@ export async function GET(req: NextRequest) {
             tag: true,
           },
         },
+        ProfileAsset: true,
+        ProfileRoute: true,
       },
     })
 
@@ -83,6 +138,18 @@ export async function GET(req: NextRequest) {
       tags: profile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,
+      })),
+      assets: profile.ProfileAsset.map((asset) => ({
+        id: asset.id,
+        url: asset.url,
+        typeId: asset.typeId,
+      })),
+      routes: profile.ProfileRoute.map((route) => ({
+        id: route.id,
+        location: route.location,
+        latitude: route.latitude,
+        longitude: route.longitude,
+        orderNumber: route.orderNumber,
       })),
     }))
 

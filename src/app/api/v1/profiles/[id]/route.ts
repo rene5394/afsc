@@ -31,6 +31,8 @@ export async function GET(req: NextRequest) {
             tag: true,
           },
         },
+        ProfileAsset: true,
+        ProfileRoute: true,
       },
     })
 
@@ -49,6 +51,18 @@ export async function GET(req: NextRequest) {
       tags: profile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,
+      })),
+      assets: profile.ProfileAsset.map((asset) => ({
+        id: asset.id,
+        url: asset.url,
+        typeId: asset.typeId,
+      })),
+      routes: profile.ProfileRoute.map((route) => ({
+        id: route.id,
+        location: route.location,
+        latitude: route.latitude,
+        longitude: route.longitude,
+        orderNumber: route.orderNumber,
       })),
     }
 
