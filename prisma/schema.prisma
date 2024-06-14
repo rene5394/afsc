@@ -65,23 +65,14 @@ model ProfileAsset {
   @@map("profile_assets")
 }
 
-model Route {
-  id       Int    @id @default(autoincrement())
-  location String
-  lang     String
-  height   String
-  ProfileRoute ProfileRoute[]
-
-  @@map("routes")
-}
-
 model ProfileRoute {
   id          Int     @id @default(autoincrement())
+  location    String
+  latitude    String
+  longitude   String
+  orderNumber Int     @map("order_number")
   profile     Profile @relation(fields: [profileId], references: [id])
   profileId   Int     @map("profile_id")
-  route       Route   @relation(fields: [routeId], references: [id])
-  routeId     Int     @map("route_id")
-  orderNumber Int     @map("order_number")
 
   @@map("profile_routes")
 }
