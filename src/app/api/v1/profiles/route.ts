@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 
+const ITEMS_PER_PAGE = 10
+
 const CreateProfileAssetSchema = z.object({
   url: z.string().url(),
   typeId: z.number(),
@@ -117,8 +119,13 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const params = req.nextUrl.searchParams
+    const page = parseInt(params.get('page') ?? '1')
+    const skip = (page - 1) * ITEMS_PER_PAGE
     const prisma = new PrismaClient()
+
     const profiles = await prisma.profile.findMany({
+      skip: skip,
+      take: ITEMS_PER_PAGE,
       include: {
         ProfileTag: {
           include: {
