@@ -2,32 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ======================
+   Global Variables
+====================== */
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-rgb: 255, 255, 255;
+  --background-rgb-red: 224, 49, 51;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+/* ======================
+   Background Styles
+====================== */
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: rgb(var(--background-rgb));
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.bg-red {
+  background-color: rgb(var(--background-rgb-red));
+}
+
+/* ======================
+   Font Styles
+====================== */
+body {
+  font-family: var(--font-acta);
+  color: rgb(var(--foreground-rgb));
+}
+
+h1 {
+  font-family: var(--font-bebas-neue);
+}
+
+.text-red {
+  color: rgb(var(--background-rgb-red));
+}
+
+/* ======================
+   Header Styles
+====================== */
+header p {
+  font-size: 15px;
+}
+
+header nav a span,
+header a span {
+  color: rgb(var(--foreground-rgb));
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  font-size: 16px;
+}
+
+.subitem-submenu-icon {
+  padding-right: 22px;
+  background: no-repeat url('https://afsc.org/themes/afsc/_include/img/ui/header-plus.svg') right center transparent;
+  background-size: 13px auto;
+}
+
+.subitem-submenu-icon.active {
+  padding-right: 22px;
+  background: no-repeat url('https://afsc.org/themes/afsc/_include/img/ui/header-minus.svg') right center transparent;
+  background-size: 13px auto;
 }
