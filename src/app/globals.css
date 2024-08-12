@@ -6,7 +6,9 @@
    Global Variables
 ====================== */
 :root {
-  --foreground-rgb: 0, 0, 0;
+  --primary-text-rgb: 0, 0, 0;
+  --secondary-text-rgb: 255, 255, 255;
+  --tertiary-text-rgba: 255, 255, 255, 0.5;
   --background-rgb: 255, 255, 255;
   --background-rgb-red: 224, 49, 51;
 }
@@ -64,4 +66,24 @@ header a span {
   padding-right: 22px;
   background: no-repeat url('https://afsc.org/themes/afsc/_include/img/ui/header-minus.svg') right center transparent;
   background-size: 13px auto;
+}
+
+/* ======================
+   Footer Styles
+====================== */
+footer nav a span,
+footer a span {
+  font-family: var(--font-bonnie-condensed-bold);
+  color: rgb(var(--secondary-text-rgb));
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  font-size: 20px;
+}
+
+#copyright-menu a span {
+  font-family: var(--font-bonnie-condensed-bold);
+  color: rgb(var(--tertiary-text-rgba));
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  font-size: 16px;
 }
