@@ -7,6 +7,10 @@ const acta = localFont({
   src: './fonts/Acta-Regular.woff',
   variable: '--font-acta',
 })
+const bonnieCondensedBold = localFont({
+  src: './fonts/BonnieCondensed-Bold.woff',
+  variable: '--font-bonnie-condensed-bold',
+})
 const bebasNeue = Bebas_Neue({
   weight: '400',
   variable: '--font-bebas-neue',
@@ -25,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${acta.variable} ${bebasNeue.variable}`}>{children}</body>
+      <body className={`${acta.variable} ${bebasNeue.variable} ${bonnieCondensedBold.variable}`}>{children}</body>
     </html>
   )
 }
