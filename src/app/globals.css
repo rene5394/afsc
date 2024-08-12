@@ -30,7 +30,7 @@ body {
 ====================== */
 body {
   font-family: var(--font-acta);
-  color: rgb(var(--foreground-rgb));
+  color: rgb(var(--primary-text-rgb));
 }
 
 h1 {
@@ -50,11 +50,22 @@ header p {
 
 header nav a span,
 header a span {
-  color: rgb(var(--foreground-rgb));
+  font-family: var(--font-bonnie-condensed-bold);
+  color: rgb(var(--primary-text-rgb));
   font-weight: 700;
   letter-spacing: 0.1px;
-  font-size: 16px;
+  font-size: 18px;
 }
+
+#donate-menu a,
+#donate-menu a span {
+  font-family: var(--font-bonnie-condensed-bold);
+  color: rgb(var(--secondary-text-rgb));
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  font-size: 18px;
+}
+
 
 .subitem-submenu-icon {
   padding-right: 22px;
