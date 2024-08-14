@@ -12,6 +12,8 @@ model Profile {
   name         String
   photo        String?
   statusId     Int            @map("status_id")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime?      @updatedAt @map("updated_at")
   status       ProfileStatus  @relation(fields: [statusId], references: [id])
   ProfileTag   ProfileTag[]
   ProfileAsset ProfileAsset[]
@@ -21,9 +23,11 @@ model Profile {
 }
 
 model ProfileStatus {
-  id       Int       @id @default(autoincrement())
-  status   String
-  profiles Profile[]
+  id        Int       @id @default(autoincrement())
+  status    String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  profiles  Profile[]
 
   @@map("profile_statuses")
 }
@@ -31,17 +35,21 @@ model ProfileStatus {
 model Tag {
   id         Int          @id @default(autoincrement())
   name       String       @unique
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime?    @updatedAt @map("updated_at")
   ProfileTag ProfileTag[]
 
   @@map("tags")
 }
 
 model ProfileTag {
-  id        Int     @id @default(autoincrement())
-  profile   Profile @relation(fields: [profileId], references: [id])
-  profileId Int     @map("profile_id")
-  tag       Tag     @relation(fields: [tagId], references: [id])
-  tagId     Int     @map("tag_id")
+  id        Int       @id @default(autoincrement())
+  profile   Profile   @relation(fields: [profileId], references: [id])
+  profileId Int       @map("profile_id")
+  tag       Tag       @relation(fields: [tagId], references: [id])
+  tagId     Int       @map("tag_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@map("profile_tags")
 }
@@ -49,6 +57,8 @@ model ProfileTag {
 model AssetType {
   id           Int            @id @default(autoincrement())
   type         String
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime?      @updatedAt @map("updated_at")
   ProfileAsset ProfileAsset[]
 
   @@map("asset_types")
@@ -61,18 +71,22 @@ model ProfileAsset {
   profile   Profile   @relation(fields: [profileId], references: [id])
   typeId    Int       @map("type_id")
   type      AssetType @relation(fields: [typeId], references: [id])
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@map("profile_assets")
 }
 
 model ProfileRoute {
-  id          Int     @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   location    String
   latitude    String
   longitude   String
-  orderNumber Int     @map("order_number")
-  profile     Profile @relation(fields: [profileId], references: [id])
-  profileId   Int     @map("profile_id")
+  orderNumber Int       @map("order_number")
+  profile     Profile   @relation(fields: [profileId], references: [id])
+  profileId   Int       @map("profile_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
 
   @@map("profile_routes")
 }

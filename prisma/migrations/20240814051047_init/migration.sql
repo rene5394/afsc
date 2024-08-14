@@ -1,0 +1,27 @@
+-- AlterTable
+ALTER TABLE `asset_types` ADD COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `updated_at` DATETIME(3) NULL;
+
+-- AlterTable
+ALTER TABLE `profile_assets` ADD COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `updated_at` DATETIME(3) NULL;
+
+-- AlterTable
+ALTER TABLE `profile_routes` ADD COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `updated_at` DATETIME(3) NULL;
+
+-- AlterTable
+ALTER TABLE `profile_statuses` ADD COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `updated_at` DATETIME(3) NULL;
+
+-- AlterTable
+ALTER TABLE `profile_tags` ADD COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `updated_at` DATETIME(3) NULL;
+
+-- AlterTable
+ALTER TABLE `profiles` ADD COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `updated_at` DATETIME(3) NULL;
+
+-- AlterTable
+ALTER TABLE `tags` ADD COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `updated_at` DATETIME(3) NULL;
