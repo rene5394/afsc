@@ -14,7 +14,6 @@ model Profile {
   statusId     Int            @map("status_id")
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime?      @updatedAt @map("updated_at")
-  status       ProfileStatus  @relation(fields: [statusId], references: [id])
   ProfileTag   ProfileTag[]
   ProfileAsset ProfileAsset[]
   ProfileRoute ProfileRoute[]
@@ -22,15 +21,6 @@ model Profile {
   @@map("profiles")
 }
 
-model ProfileStatus {
-  id        Int       @id @default(autoincrement())
-  status    String
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  profiles  Profile[]
-
-  @@map("profile_statuses")
-}
 
 model Tag {
   id         Int          @id @default(autoincrement())
