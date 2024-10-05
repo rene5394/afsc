@@ -2,9 +2,17 @@ import React from 'react'
 import MainMenu from '@/app/components/Header/MainMenu'
 import DonateMenu from '@/app/components/Header/DonateMenu'
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  showBottomBorder?: boolean
+}
+
+const Header: React.FC<HeaderProps> = ({ showBottomBorder = true }) => {
   return (
-    <header>
+    <header
+      className={`${
+        showBottomBorder ? 'border-b-gray-300 border-b-[1px]' : ''
+      }`}
+    >
       <div className='flex'>
         <div className='flex-none w-[210px] px-[30px] py-4'>
           <img
