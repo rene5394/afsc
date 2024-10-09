@@ -6,18 +6,11 @@ const UpdateProfileSchema = z
   .object({
     name: z.string().optional(),
     photo: z.string().optional(),
-    statusId: z.string().optional(),
   })
-  .refine(
-    (data) =>
-      data.name !== undefined ||
-      data.photo !== undefined ||
-      data.statusId !== undefined,
-    {
-      message: 'At least one of the fields must be provided',
-      path: ['name', 'photo', 'statusId'],
-    }
-  )
+  .refine((data) => data.name !== undefined || data.photo !== undefined, {
+    message: 'At least one of the fields must be provided',
+    path: ['name', 'photo'],
+  })
 
 export async function GET(req: NextRequest) {
   try {
@@ -47,7 +40,6 @@ export async function GET(req: NextRequest) {
       id: profile.id,
       name: profile.name,
       photo: profile.photo,
-      statusId: profile.statusId,
       tags: profile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,

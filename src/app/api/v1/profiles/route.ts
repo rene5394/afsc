@@ -19,7 +19,6 @@ const CreateProfileRouteSchema = z.object({
 const CreateProfileSchema = z.object({
   name: z.string(),
   photo: z.string().optional(),
-  statusId: z.number(),
   tagIds: z.array(z.number()),
   assets: z.array(CreateProfileAssetSchema).optional(),
   routes: z.array(CreateProfileRouteSchema).optional(),
@@ -39,33 +38,36 @@ export async function POST(req: NextRequest) {
     }
 
     const profile = validationResult.data
-    const { name, photo, statusId, tagIds, assets, routes } = profile
+    const { name, photo, tagIds, assets, routes } = profile
 
     const createdProfile = await prisma.$transaction(async (prisma) => {
       const newProfile = await prisma.profile.create({
         data: {
           name,
           photo,
-          statusId,
           ProfileTag: {
             create: tagIds.map((tagId) => ({
               tagId,
             })),
           },
-          ProfileAsset: assets ? {
-            create: assets.map((asset) => ({
-              url: asset.url,
-              typeId: asset.typeId,
-            })),
-          } : undefined,
-          ProfileRoute: routes ? {
-            create: routes.map((route) => ({
-              location: route.location,
-              latitude: route.latitude,
-              longitude: route.longitude,
-              orderNumber: route.orderNumber,
-            })),
-          } : undefined,
+          ProfileAsset: assets
+            ? {
+                create: assets.map((asset) => ({
+                  url: asset.url,
+                  typeId: asset.typeId,
+                })),
+              }
+            : undefined,
+          ProfileRoute: routes
+            ? {
+                create: routes.map((route) => ({
+                  location: route.location,
+                  latitude: route.latitude,
+                  longitude: route.longitude,
+                  orderNumber: route.orderNumber,
+                })),
+              }
+            : undefined,
         },
         include: {
           ProfileTag: {
@@ -85,7 +87,6 @@ export async function POST(req: NextRequest) {
       id: createdProfile.id,
       name: createdProfile.name,
       photo: createdProfile.photo,
-      statusId: createdProfile.statusId,
       tags: createdProfile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,
@@ -141,7 +142,6 @@ export async function GET(req: NextRequest) {
       id: profile.id,
       name: profile.name,
       photo: profile.photo,
-      statusId: profile.statusId,
       tags: profile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,
