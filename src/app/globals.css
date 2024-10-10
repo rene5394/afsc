@@ -33,7 +33,8 @@ body {
   color: rgb(var(--primary-text-rgb));
 }
 
-h1 {
+h1,
+thead {
   font-family: var(--font-bebas-neue);
 }
 
@@ -66,16 +67,19 @@ header a span {
   font-size: 18px;
 }
 
-
 .subitem-submenu-icon {
   padding-right: 22px;
-  background: no-repeat url('https://afsc.org/themes/afsc/_include/img/ui/header-plus.svg') right center transparent;
+  background: no-repeat
+    url('https://afsc.org/themes/afsc/_include/img/ui/header-plus.svg') right
+    center transparent;
   background-size: 13px auto;
 }
 
 .subitem-submenu-icon.active {
   padding-right: 22px;
-  background: no-repeat url('https://afsc.org/themes/afsc/_include/img/ui/header-minus.svg') right center transparent;
+  background: no-repeat
+    url('https://afsc.org/themes/afsc/_include/img/ui/header-minus.svg') right
+    center transparent;
   background-size: 13px auto;
 }
 
