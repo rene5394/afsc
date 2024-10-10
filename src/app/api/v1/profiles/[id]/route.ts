@@ -5,6 +5,7 @@ import { z } from 'zod'
 const UpdateProfileSchema = z
   .object({
     name: z.string().optional(),
+    story: z.string().optional(),
     photo: z.string().optional(),
   })
   .refine((data) => data.name !== undefined || data.photo !== undefined, {
@@ -39,6 +40,7 @@ export async function GET(req: NextRequest) {
     const transformedProfile = {
       id: profile.id,
       name: profile.name,
+      story: profile.story,
       photo: profile.photo,
       tags: profile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,

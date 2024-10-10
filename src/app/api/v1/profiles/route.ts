@@ -18,6 +18,7 @@ const CreateProfileRouteSchema = z.object({
 
 const CreateProfileSchema = z.object({
   name: z.string(),
+  story: z.string(),
   photo: z.string().optional(),
   tagIds: z.array(z.number()),
   assets: z.array(CreateProfileAssetSchema).optional(),
@@ -38,12 +39,13 @@ export async function POST(req: NextRequest) {
     }
 
     const profile = validationResult.data
-    const { name, photo, tagIds, assets, routes } = profile
+    const { name, story, photo, tagIds, assets, routes } = profile
 
     const createdProfile = await prisma.$transaction(async (prisma) => {
       const newProfile = await prisma.profile.create({
         data: {
           name,
+          story,
           photo,
           ProfileTag: {
             create: tagIds.map((tagId) => ({
@@ -86,6 +88,7 @@ export async function POST(req: NextRequest) {
     const transformedProfile = {
       id: createdProfile.id,
       name: createdProfile.name,
+      story: createdProfile.story,
       photo: createdProfile.photo,
       tags: createdProfile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
@@ -141,6 +144,7 @@ export async function GET(req: NextRequest) {
     const transformedProfiles = profiles.map((profile) => ({
       id: profile.id,
       name: profile.name,
+      story: profile.story,
       photo: profile.photo,
       tags: profile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
