@@ -1,9 +1,12 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L, { LatLngTuple } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { FetchProfilesUseCase } from '@/modules/profile/application/FetchProfilesUseCase'
+import { ProfileRepository } from '@/modules/profile/infrastructure/ProfileRepository'
+import { Profile } from '@/modules/profile/domain/Profile'
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
@@ -13,35 +16,57 @@ L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
   iconUrl: markerIcon.src,
   shadowUrl: markerShadow.src,
-});
+})
 
 const Map: React.FC = () => {
-  const markers = [
-    { position: [40.7128, -74.0060], popupText: "New York City" },
-    { position: [34.0522, -118.2437], popupText: "Los Angeles" },
-    { position: [41.8781, -87.6298], popupText: "Chicago" },
-    { position: [29.7604, -95.3698], popupText: "Houston" },
-    { position: [39.7392, -104.9903], popupText: "Denver" },
-    { position: [47.6062, -122.3321], popupText: "Seattle" },
-    { position: [38.9072, -77.0369], popupText: "Washington, D.C." },
-    { position: [25.7617, -80.1918], popupText: "Miami" },
-    { position: [33.4484, -112.0740], popupText: "Phoenix" },
-    { position: [41.4925, -99.9018], popupText: "Nebraska" }
-  ]
+  const [profiles, setProfiles] = useState<Profile[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [shouldFetch, setShouldFetch] = useState(true)
+
+  const fetchProfilesUseCase = new FetchProfilesUseCase(new ProfileRepository())
+
+  const fetchProfiles = async (page: number) => {
+    try {
+      const { data, meta } = await fetchProfilesUseCase.execute(page)
+      setProfiles((prevProfiles) => [...prevProfiles, ...data])
+      setShouldFetch(meta.nextPage !== null)
+    } catch (error) {
+      console.error('Error fetching profiles:', error)
+    }
+  }
+
+  useEffect(() => {
+    const loadProfiles = async () => {
+      if (shouldFetch) {
+        await fetchProfiles(currentPage)
+        setCurrentPage((prevPage) => prevPage + 1)
+      }
+    }
+
+    loadProfiles()
+  }, [currentPage, shouldFetch])
 
   return (
     <MapContainer
-      center={[41.4925, -99.9018]}
-      zoom={4}
+      center={[25.5, -25.5]}
+      zoom={2}
       style={{ height: '400px', width: '100%' }}
     >
       <TileLayer
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {markers.map((marker, index) => (
-        <Marker key={index} position={marker.position as LatLngTuple}>
-          <Popup>{marker.popupText}</Popup>
+      {profiles.map((marker, index) => (
+        <Marker
+          key={index}
+          position={
+            [
+              marker.routes[0].latitude,
+              marker.routes[0].longitude,
+            ] as unknown as LatLngTuple
+          }
+        >
+          <Popup>{marker.routes[0].location}</Popup>
         </Marker>
       ))}
     </MapContainer>
