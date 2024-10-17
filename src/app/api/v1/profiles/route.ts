@@ -127,6 +127,8 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * ITEMS_PER_PAGE
     const prisma = new PrismaClient()
 
+    const totalProfiles = await prisma.profile.count()
+
     const profiles = await prisma.profile.findMany({
       skip: skip,
       take: ITEMS_PER_PAGE,
@@ -164,8 +166,22 @@ export async function GET(req: NextRequest) {
       })),
     }))
 
+    const totalPages = Math.ceil(totalProfiles / ITEMS_PER_PAGE)
+    const nextPage = page < totalPages ? page + 1 : null
+    const prevPage = page > 1 ? page - 1 : null
+
     return NextResponse.json(
-      { status: 200, data: transformedProfiles },
+      {
+        status: 200,
+        data: transformedProfiles,
+        meta: {
+          total: totalProfiles,
+          totalPages: totalPages,
+          currentPage: page,
+          nextPage: nextPage,
+          prevPage: prevPage,
+        },
+      },
       { status: 200 }
     )
   } catch (error) {
