@@ -1,20 +1,22 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { FetchProfilesUseCase } from '@/modules/profile/application/FetchProfilesUseCase'
 import { ProfileRepository } from '@/modules/profile/infrastructure/ProfileRepository'
 import { Profile } from '@/modules/profile/domain/Profile'
 
 const TableSection: React.FC = () => {
   const [profiles, setProfiles] = useState<Profile[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
 
   const fetchProfilesUseCase = new FetchProfilesUseCase(new ProfileRepository())
 
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const fetchedProfiles = await fetchProfilesUseCase.execute()
-        setProfiles(fetchedProfiles)
+        const { data } = await fetchProfilesUseCase.execute(currentPage)
+        setProfiles(data)
       } catch (error) {
         console.error('Error fetching profiles:', error)
       }
@@ -22,9 +24,10 @@ const TableSection: React.FC = () => {
 
     fetchProfiles()
   }, [])
+
   return (
     <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto py-10'>
-      <h2 className='text-xl'>Cases/Personas</h2>
+      <h2 className='text-xl'>CASES/PERSONAS</h2>
       <hr className='border-t border-gray-300 mt-2 mb-4' />
       <div className='flex items-start'>
         <div className='flex-1'>
@@ -40,7 +43,9 @@ const TableSection: React.FC = () => {
             <tbody>
               {profiles.map((profile, index) => (
                 <tr key={index}>
-                  <td className='pt-6'>{profile.name}</td>
+                  <td className='pt-6'>
+                    <Link href={`/profile/${profile.id}`}>{profile.name}</Link>
+                  </td>
                   <td className='pt-6'>
                     {profile.routes[0]?.location || 'Unknown'}
                   </td>
