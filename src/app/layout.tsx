@@ -29,7 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${acta.variable} ${bebasNeue.variable} ${bonnieCondensedBold.variable}`}>{children}</body>
+      <body
+        className={`${acta.variable} ${bebasNeue.variable} ${bonnieCondensedBold.variable}`}
+      >
+        {children}
+      </body>
     </html>
   )
 }
