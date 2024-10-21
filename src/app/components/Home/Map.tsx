@@ -13,14 +13,14 @@ interface MapProps {
 
 const redIcon = L.divIcon({
   className: 'custom-red-marker',
-  html: '<div style="background-color: red; border: 2px solid red; border-radius: 50%; width: 8px; height: 8px;"></div>',
+  html: '<div style="background-color: red; border: 2px solid red; border-radius: 50%; width: 10px; height: 10px;"></div>',
   iconSize: [20, 20],
   iconAnchor: [10, 10],
 })
 
 const blackIcon = L.divIcon({
   className: 'custom-black-marker',
-  html: '<div style="background-color: black; border: 2px solid black; border-radius: 50%; width: 8px; height: 8px;"></div>',
+  html: '<div style="background-color: black; border: 2px solid black; border-radius: 50%; width: 10px; height: 10px;"></div>',
   iconSize: [20, 20],
   iconAnchor: [10, 10],
 })

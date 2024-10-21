@@ -32,7 +32,7 @@ const TagsSidebar: React.FC<TagsSidebarProps> = ({
   }, [])
 
   return (
-    <div className='flex-none w-[210px] mr-8'>
+    <div className='flex-none w-[165px] mr-8'>
       {tags.map((tag) => (
         <button
           key={tag.id}
