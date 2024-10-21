@@ -1,14 +1,21 @@
 import React from 'react'
+import Breadcrumb from '@/app/components/Profile/Breadcrumb'
 import PhotoSection from '@/app/components/Profile/PhotoSection'
 import MapSection from '@/app/components/Profile/MapSection'
-import Breadcrumb from '@/app/components/Profile/Breadcrumb'
+import StorySection from '@/app/components/Profile/StorySection'
+import { Profile } from '@/modules/profile/domain/Profile'
 
-const Container: React.FC = () => {
+interface ContainerProps {
+  profile: Profile
+}
+
+const Container: React.FC<ContainerProps> = ({ profile }) => {
   return (
     <>
       <Breadcrumb />
-      <PhotoSection />
-      <MapSection />
+      <PhotoSection profile={profile} />
+      <MapSection profile={profile} />
+      <StorySection profile={profile} />
     </>
   )
 }

@@ -84,6 +84,13 @@ header a span {
 }
 
 /* ======================
+   Story Styles
+====================== */
+#story-text p {
+  margin-bottom: 20px;
+}
+
+/* ======================
    Footer Styles
 ====================== */
 footer nav a span,
