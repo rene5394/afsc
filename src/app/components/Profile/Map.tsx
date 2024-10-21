@@ -1,12 +1,9 @@
 'use client'
 
 import React from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import L, { LatLngTuple } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 
 import { ProfileRoute } from '@/modules/profile-route/domain/ProfileRoute'
 
@@ -14,33 +11,59 @@ interface MapProps {
   profileRoutes: ProfileRoute[]
 }
 
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x.src,
-  iconUrl: markerIcon.src,
-  shadowUrl: markerShadow.src,
+const greenIcon = L.divIcon({
+  className: 'custom-green-marker',
+  html: '<div style="background-color: green; border: 2px solid green; border-radius: 50%; width: 15px; height: 15px;"></div>',
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+})
+
+const redIcon = L.divIcon({
+  className: 'custom-red-marker',
+  html: '<div style="background-color: red; border: 2px solid red; border-radius: 50%; width: 15px; height: 15px;"></div>',
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
 })
 
 const Map: React.FC<MapProps> = ({ profileRoutes }) => {
+  const polylinePositions: LatLngTuple[] = profileRoutes.map((route) => [
+    parseFloat(route.latitude),
+    parseFloat(route.longitude),
+  ])
+
   return (
     <MapContainer
-      center={[41.4925, -99.9018]}
-      zoom={4}
+      center={[25.5, -35.5]}
+      zoom={2}
       style={{ height: '400px', width: '100%' }}
     >
       <TileLayer
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {profileRoutes.map((marker, index) => (
-        <Marker
-          key={index}
-          position={
-            [marker.latitude, marker.longitude] as unknown as LatLngTuple
-          }
-        >
-          <Popup>{marker.location}</Popup>
-        </Marker>
-      ))}
+
+      {profileRoutes.length > 0 && (
+        <>
+          <Marker position={polylinePositions[0]} icon={greenIcon}>
+            <Popup>{profileRoutes[0].location}</Popup>
+          </Marker>
+
+          {profileRoutes.length > 1 && (
+            <>
+              <Marker
+                position={polylinePositions[polylinePositions.length - 1]}
+                icon={redIcon}
+              >
+                <Popup>
+                  {profileRoutes[profileRoutes.length - 1].location}
+                </Popup>
+              </Marker>
+
+              <Polyline positions={polylinePositions} color='#1e8dd3' />
+            </>
+          )}
+        </>
+      )}
     </MapContainer>
   )
 }
