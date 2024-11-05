@@ -89,7 +89,7 @@ const TableSection: React.FC = () => {
 
   return (
     <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto py-10'>
-      <h2 className='bebas-neue text-4xl'>CASES/PERSONAS</h2>
+      <h2 className='text-4xl'>CASES/PERSONAS</h2>
       <hr className='border-t border-gray-300 mt-2 mb-4' />
       <div className='flex items-start'>
         <div className='flex-1'>

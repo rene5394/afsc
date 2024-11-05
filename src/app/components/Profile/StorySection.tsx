@@ -11,7 +11,7 @@ const StorySection: React.FC<StorySectionProps> = ({ profile }) => {
       <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto pt-4 pb-10'>
         <div className='flex items-start'>
           <div className='w-2/3'>
-            <h2 className='text-xl'>TRAVEL STORY</h2>
+            <h2 className='text-3xl'>TRAVEL STORY</h2>
             <hr className='border-t border-gray-300 mt-2 mb-4' />
             <div
               id='story-text'

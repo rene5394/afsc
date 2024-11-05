@@ -16,11 +16,13 @@ const MapSection: React.FC<MapSectionProps> = ({ profile }) => {
           <Map profileRoutes={profile.routes} />
         </div>
         <div className='w-1/2 pl-8'>
-          <h1 className='text-3xl font-bold'>THE ROUTE</h1>
+          <h2 className='text-3xl'>THE ROUTE</h2>
           <hr className='border-t border-gray-300 mt-2 mb-4' />
           <div className='flex items-start my-2'>
             <div className='flex-none w-[150px]'>
-              <p className='text-sm text-green-400 font-bold'>STARTING FROM</p>
+              <h3 className='text-lg text-green-400 font-bold'>
+                STARTING FROM
+              </h3>
             </div>
             <div className='flex-auto'>
               <p className='text-sm'>{profile.routes[0].location}</p>
@@ -28,7 +30,7 @@ const MapSection: React.FC<MapSectionProps> = ({ profile }) => {
           </div>
           <div className='flex items-start my-2'>
             <div className='flex-none w-[150px]'>
-              <p className='text-sm text-red-500 font-bold'>CURRENTLY</p>
+              <h3 className='text-lg text-red-500 font-bold'>CURRENTLY</h3>
             </div>
             <div className='flex-auto'>
               <p className='text-sm'>
@@ -36,7 +38,7 @@ const MapSection: React.FC<MapSectionProps> = ({ profile }) => {
               </p>
             </div>
           </div>
-          <h1 className='text-3xl font-bold mt-8'>THE TRAVEL</h1>
+          <h2 className='text-3xl mt-8'>THE TRAVEL</h2>
           <hr className='border-t border-gray-300 mt-2 mb-4' />
           <ul className='list-disc list-inside'>
             {profile.routes.map((route) => (
