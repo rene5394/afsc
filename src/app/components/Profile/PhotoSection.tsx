@@ -10,7 +10,7 @@ const PhotoSection: React.FC<PhotoSectionProps> = ({ profile }) => {
     <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto pt-1 pb-2'>
       <div className='flex items-start'>
         <div className='flex-none w-[150px]'>
-          <img src='https://via.placeholder.com/150' alt='placeholder' />
+          <img src='/images/profile-default-photo.jpg' alt='placeholder' />
         </div>
         <div className='flex-auto ml-6'>
           <h1 className='text-5xl'>{profile.name}</h1>
