@@ -4,8 +4,14 @@ import { Bebas_Neue } from 'next/font/google'
 import './globals.css'
 
 const acta = localFont({
+  weight: '400',
   src: './fonts/Acta-Regular.woff',
   variable: '--font-acta',
+})
+const actaBold = localFont({
+  weight: '700',
+  src: './fonts/Acta-Bold.woff',
+  variable: '--font-acta-bold',
 })
 const bonnieCondensedBold = localFont({
   src: './fonts/BonnieCondensed-Bold.woff',
@@ -30,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${acta.variable} ${bebasNeue.variable} ${bonnieCondensedBold.variable}`}
+        className={`${acta.variable} ${actaBold.variable} ${bebasNeue.variable} ${bonnieCondensedBold.variable}`}
       >
         {children}
       </body>

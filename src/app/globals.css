@@ -38,8 +38,24 @@ thead {
   font-family: var(--font-bebas-neue);
 }
 
+tbody td:first-child {
+  font-family: var(--font-acta-bold);
+}
+
 .text-red {
   color: rgb(var(--background-rgb-red));
+}
+
+.acta {
+  font-family: var(--font-acta);
+}
+
+.bebas-neue {
+  font-family: var(--font-bebas-neue), sans-serif;
+}
+
+.bonnie-condensed-bold {
+  font-family: var(--font-bonnie-condensed-bold);
 }
 
 /* ======================
