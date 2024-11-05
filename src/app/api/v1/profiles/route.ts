@@ -1,13 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
+import { S3Client } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
 import { z } from 'zod'
 
 const ITEMS_PER_PAGE = 10
 
-const CreateProfileAssetSchema = z.object({
-  url: z.string().url(),
-  typeId: z.number(),
-})
+enum AssetType {
+  IMAGE = 'image',
+  AUDIO = 'audio',
+  VIDEO = 'video',
+}
+const AssetTypeIdMap = {
+  [AssetType.IMAGE]: 1,
+  [AssetType.AUDIO]: 2,
+  [AssetType.VIDEO]: 3,
+} as const
+
+const CreateProfileAssetSchema = z
+  .object({
+    file: z.instanceof(File).optional(),
+    url: z.string().optional(),
+    type: z.enum(Object.values(AssetType) as [string, ...string[]]),
+  })
+  .refine(
+    (data) => {
+      switch (data.type) {
+        case AssetType.IMAGE:
+        case AssetType.AUDIO:
+          return !!data.file
+        case AssetType.VIDEO:
+          return !!data.url
+        default:
+          return false
+      }
+    },
+    {
+      message:
+        'For image and audio, asset is required. For video, url is required.',
+      path: ['asset', 'url'],
+    }
+  )
 
 const CreateProfileRouteSchema = z.object({
   location: z.string(),
@@ -16,20 +49,107 @@ const CreateProfileRouteSchema = z.object({
   orderNumber: z.number(),
 })
 
-const CreateProfileSchema = z.object({
-  name: z.string(),
-  story: z.string(),
-  photo: z.string().optional(),
-  tagIds: z.array(z.number()),
-  assets: z.array(CreateProfileAssetSchema).optional(),
-  routes: z.array(CreateProfileRouteSchema).optional(),
+const CreateProfileSchema = z
+  .object({
+    name: z.string(),
+    story: z.string(),
+    photo: z.instanceof(File).optional(),
+    tagIds: z.array(z.number()),
+    assets: z.array(CreateProfileAssetSchema).optional(),
+    routes: z.array(CreateProfileRouteSchema).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.photo) {
+        return data.photo instanceof File && data.photo.size > 0
+      }
+      return true
+    },
+    {
+      message: 'The photo field is sent but no file has been selected',
+      path: ['photo'],
+    }
+  )
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
 })
+
+async function uploadToS3(file: File, folder: string) {
+  const uploadParams = {
+    Bucket: process.env.AWS_BUCKET_NAME!,
+    Key: `${folder}/${Date.now()}_${file.name}`,
+    Body: file.stream(),
+    ContentType: file.type || 'application/octet-stream',
+  }
+
+  try {
+    const upload = new Upload({
+      client: s3,
+      params: uploadParams,
+    })
+
+    await upload.done()
+    return `https://${uploadParams.Bucket}.s3.amazonaws.com/${uploadParams.Key}`
+  } catch (error) {
+    console.error('Error uploading to S3:', error)
+    throw new Error('Failed to upload to S3')
+  }
+}
+
+function parseNestedFormData(formData: FormData) {
+  const parsedData: Record<string, any> = {}
+
+  formData.forEach((value, key) => {
+    const keys = key.split(/\[|\]\[|\]/).filter(Boolean)
+    let current = parsedData
+
+    keys.forEach((part, index) => {
+      if (index === keys.length - 1) {
+        if (Array.isArray(current)) {
+          current.push(value)
+        } else {
+          current[part] = value instanceof File ? value : value.toString()
+        }
+      } else {
+        if (!current[part]) {
+          current[part] = isNaN(Number(keys[index + 1])) ? {} : []
+        }
+        current = current[part]
+      }
+    })
+  })
+
+  return parsedData
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const prisma = new PrismaClient()
-    const body = await req.json()
-    const validationResult = CreateProfileSchema.safeParse(body)
+    const formData = await req.formData()
+    const body = parseNestedFormData(formData)
+
+    if (body.tagIds) {
+      body.tagIds = body.tagIds.map((id: string) => parseInt(id))
+    }
+
+    if (body.routes) {
+      body.routes = body.routes.map((route: any) => ({
+        ...route,
+        orderNumber: parseInt(route.orderNumber, 10),
+      }))
+    }
+
+    const validationResult = CreateProfileSchema.safeParse({
+      ...body,
+      photo: formData.get('photo'),
+      tagIds: body.tagIds || [],
+      assets: body.assets || [],
+      routes: body.routes || [],
+    })
 
     if (!validationResult.success) {
       return NextResponse.json(
@@ -38,29 +158,61 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const profile = validationResult.data
-    const { name, story, photo, tagIds, assets, routes } = profile
+    const { name, photo, story, tagIds, assets, routes } = validationResult.data
 
+    let photoUrl = ''
+    if (photo) {
+      photoUrl = await uploadToS3(
+        formData.get('photo') as File,
+        'profile-photos'
+      )
+    }
+
+    const uploadedAssets = await Promise.all(
+      assets?.map(async (asset) => {
+        if (asset.type === AssetType.IMAGE || asset.type === AssetType.AUDIO) {
+          const file = asset.file as File
+          if (file) {
+            let uploadedUrl
+            if (asset.type === AssetType.IMAGE) {
+              uploadedUrl = await uploadToS3(file, 'images')
+            }
+            if (asset.type === AssetType.AUDIO) {
+              uploadedUrl = await uploadToS3(file, 'audios')
+            }
+
+            return { url: uploadedUrl, typeId: AssetTypeIdMap[asset.type] }
+          }
+        }
+        if (asset.type === AssetType.VIDEO) {
+          return { url: asset.url, typeId: AssetTypeIdMap[asset.type] }
+        }
+      }) ?? []
+    )
+
+    const prisma = new PrismaClient()
     const createdProfile = await prisma.$transaction(async (prisma) => {
       const newProfile = await prisma.profile.create({
         data: {
           name,
           story,
-          photo,
+          photo: photoUrl,
           ProfileTag: {
             create: tagIds.map((tagId) => ({
               tagId,
             })),
           },
-          ProfileAsset: assets
+          ProfileAsset: uploadedAssets?.length
             ? {
-                create: assets.map((asset) => ({
-                  url: asset.url,
-                  typeId: asset.typeId,
-                })),
+                create: uploadedAssets
+                  .filter((asset) => asset?.url)
+                  .map((asset) => ({
+                    url: asset!.url!,
+                    type: { connect: { id: asset!.typeId } },
+                  })),
               }
             : undefined,
-          ProfileRoute: routes
+          ProfileRoute: routes?.length
             ? {
                 create: routes.map((route) => ({
                   location: route.location,
@@ -72,11 +224,7 @@ export async function POST(req: NextRequest) {
             : undefined,
         },
         include: {
-          ProfileTag: {
-            include: {
-              tag: true,
-            },
-          },
+          ProfileTag: { include: { tag: true } },
           ProfileAsset: true,
           ProfileRoute: true,
         },
@@ -113,6 +261,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
+    console.error(error)
     return NextResponse.json(
       { status: 500, message: 'Internal Server Error' },
       { status: 500 }
