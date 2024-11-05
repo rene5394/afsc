@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import { z } from 'zod'
+import { link } from 'fs'
 
 const ITEMS_PER_PAGE = 10
 
@@ -49,6 +50,11 @@ const CreateProfileRouteSchema = z.object({
   orderNumber: z.number(),
 })
 
+const CreateProfileLinkSchema = z.object({
+  title: z.string(),
+  url: z.string(),
+})
+
 const CreateProfileSchema = z
   .object({
     name: z.string(),
@@ -57,6 +63,7 @@ const CreateProfileSchema = z
     tagIds: z.array(z.number()),
     assets: z.array(CreateProfileAssetSchema).optional(),
     routes: z.array(CreateProfileRouteSchema).optional(),
+    links: z.array(CreateProfileLinkSchema).optional(),
   })
   .refine(
     (data) => {
@@ -149,6 +156,7 @@ export async function POST(req: NextRequest) {
       tagIds: body.tagIds || [],
       assets: body.assets || [],
       routes: body.routes || [],
+      links: body.links || [],
     })
 
     if (!validationResult.success) {
@@ -158,7 +166,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { name, photo, story, tagIds, assets, routes } = validationResult.data
+    const { name, photo, story, tagIds, assets, routes, links } =
+      validationResult.data
 
     let photoUrl = ''
     if (photo) {
@@ -222,11 +231,20 @@ export async function POST(req: NextRequest) {
                 })),
               }
             : undefined,
+          ProfileLink: links?.length
+            ? {
+                create: links.map((link) => ({
+                  title: link.title,
+                  url: link.url,
+                })),
+              }
+            : undefined,
         },
         include: {
           ProfileTag: { include: { tag: true } },
           ProfileAsset: true,
           ProfileRoute: true,
+          ProfileLink: true,
         },
       })
 
@@ -253,6 +271,11 @@ export async function POST(req: NextRequest) {
         latitude: route.latitude,
         longitude: route.longitude,
         orderNumber: route.orderNumber,
+      })),
+      links: createdProfile.ProfileLink.map((link) => ({
+        id: link.id,
+        title: link.title,
+        url: link.url,
       })),
     }
 
@@ -289,6 +312,7 @@ export async function GET(req: NextRequest) {
         },
         ProfileAsset: true,
         ProfileRoute: true,
+        ProfileLink: true,
       },
     })
 
@@ -312,6 +336,11 @@ export async function GET(req: NextRequest) {
         latitude: route.latitude,
         longitude: route.longitude,
         orderNumber: route.orderNumber,
+      })),
+      links: profile.ProfileLink.map((link) => ({
+        id: link.id,
+        title: link.title,
+        url: link.url,
       })),
     }))
 

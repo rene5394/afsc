@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
         },
         ProfileAsset: true,
         ProfileRoute: true,
+        ProfileLink: true,
       },
     })
 
@@ -57,6 +58,11 @@ export async function GET(req: NextRequest) {
         latitude: route.latitude,
         longitude: route.longitude,
         orderNumber: route.orderNumber,
+      })),
+      links: profile.ProfileLink.map((link) => ({
+        id: link.id,
+        title: link.title,
+        url: link.url,
       })),
     }
 
