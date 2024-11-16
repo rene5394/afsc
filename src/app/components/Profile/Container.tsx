@@ -18,8 +18,8 @@ const Container: React.FC<ContainerProps> = ({ profile }) => {
       <PhotoSection profile={profile} />
       <MapSection profile={profile} />
       <StorySection profile={profile} />
-      <VideoSection profile={profile} />
-      <LinkSection profile={profile} />
+      <VideoSection profileAssets={profile.assets} />
+      <LinkSection profileLinks={profile.links} />
     </>
   )
 }

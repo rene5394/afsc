@@ -11,6 +11,7 @@
   --tertiary-text-rgba: 255, 255, 255, 0.5;
   --background-rgb: 255, 255, 255;
   --background-rgb-red: 224, 49, 51;
+  --swiper-navigation-size: 25px !important;
 }
 
 /* ======================
@@ -50,6 +51,10 @@ tbody td:first-child {
 
 .acta {
   font-family: var(--font-acta);
+}
+
+.acta-bold {
+  font-family: var(--font-acta-bold);
 }
 
 .bebas-neue {
@@ -106,6 +111,25 @@ header a span {
 ====================== */
 #story-text p {
   margin-bottom: 20px;
+}
+
+/* ======================
+   Link Styles
+====================== */
+#link-text p {
+  font-family: var(--font-acta);
+}
+
+#link-text p a {
+  font-family: var(--font-acta-bold);
+}
+
+/* ======================
+   Slider Styles
+====================== */
+.swiper-button-prev,
+.swiper-button-next {
+  color: #fff !important;
 }
 
 /* ======================
