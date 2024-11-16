@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import { z } from 'zod'
-import { link } from 'fs'
 
 const ITEMS_PER_PAGE = 10
 
@@ -58,8 +57,8 @@ const CreateProfileLinkSchema = z.object({
 const CreateProfileSchema = z
   .object({
     name: z.string(),
-    story: z.string(),
-    photo: z.instanceof(File).optional(),
+    story: z.string().optional(),
+    photo: z.union([z.instanceof(File), z.string(), z.null(), z.undefined()]),
     tagIds: z.array(z.number()),
     assets: z.array(CreateProfileAssetSchema).optional(),
     routes: z.array(CreateProfileRouteSchema).optional(),
