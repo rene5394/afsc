@@ -11,7 +11,7 @@ const WelcomeSection: React.FC = () => {
           Discover the narratives of migrants globally, individuals who have
           pursued a brighter future for themselves and their loved ones.
           Regardless of nationality, language, or age, migration touches us all.
-          It's about people striving to enhance their lives, displaying
+          It&apos;s about people striving to enhance their lives, displaying
           resilience in the face of challenges, and persistently seeking
           opportunities to thrive and express their humanity.
         </p>
