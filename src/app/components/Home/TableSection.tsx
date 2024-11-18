@@ -91,61 +91,65 @@ const TableSection: React.FC = () => {
     <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto py-10'>
       <h2 className='text-4xl'>CASES/PERSONAS</h2>
       <hr className='border-t border-gray-300 mt-2 mb-4' />
-      <div className='flex items-start'>
-        <div className='flex-1'>
-          <table className='w-full mt-5'>
-            <thead>
-              <tr>
-                <th className='text-xl text-left'>NAME</th>
-                <th className='text-xl text-left'>ORIGIN</th>
-                <th className='text-xl text-left'>AGE</th>
-                <th className='text-xl text-left'>MIGRATION TYPE</th>
+      <div className='overflow-x-visible overflow-y-hidden pb-6'>
+        <table className='w-full overflow-x-visible table-auto md:mt-5'>
+          <thead>
+            <tr>
+              <th className='text-xl text-left whitespace-nowrap pr-4'>NAME</th>
+              <th className='text-xl text-left whitespace-nowrap pr-4'>
+                ORIGIN
+              </th>
+              <th className='text-xl text-left whitespace-nowrap pr-4'>AGE</th>
+              <th className='text-xl text-left whitespace-nowrap'>
+                MIGRATION TYPE
+              </th>
+            </tr>
+            <tr>
+              <th colSpan={4}>
+                <hr className='border-t border-gray-300 mt-2' />
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {profiles.map((profile, index) => (
+              <tr key={index}>
+                <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
+                  <Link href={`/profile/${profile.id}`}>{profile.name}</Link>
+                </td>
+                <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
+                  {profile.routes[0]?.location || 'Unknown'}
+                </td>
+                <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
+                  N/A
+                </td>
+                <td className='pt-6 text-sm lg:text-base whitespace-nowrap'>
+                  {profile.tags.map((tag, tagIndex) => (
+                    <span key={tagIndex} className='border px-3 py-1 ml-3'>
+                      {tag.name}
+                    </span>
+                  ))}
+                </td>
               </tr>
-              <tr>
-                <th colSpan={4}>
-                  <hr className='border-t border-gray-300 mt-2' />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {profiles.map((profile, index) => (
-                <tr key={index}>
-                  <td className='pt-6'>
-                    <Link href={`/profile/${profile.id}`}>{profile.name}</Link>
-                  </td>
-                  <td className='pt-6'>
-                    {profile.routes[0]?.location || 'Unknown'}
-                  </td>
-                  <td className='pt-6'>N/A</td>
-                  <td className='pt-6'>
-                    {profile.tags.map((tag, tagIndex) => (
-                      <span key={tagIndex} className='border px-3 py-1 ml-3'>
-                        {tag.name}
-                      </span>
-                    ))}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className='mt-8 flex justify-center space-x-2'>
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className='border px-4 py-2 bg-gray-200 disabled:opacity-50'
-            >
-              Previous
-            </button>
-            {renderPageNumbers()}
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className='border px-4 py-2 bg-gray-200 disabled:opacity-50'
-            >
-              Next
-            </button>
-          </div>
-        </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className='mt-8 flex justify-center space-x-2'>
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className='border px-4 py-2 bg-gray-200 disabled:opacity-50'
+        >
+          Previous
+        </button>
+        {renderPageNumbers()}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className='border px-4 py-2 bg-gray-200 disabled:opacity-50'
+        >
+          Next
+        </button>
       </div>
     </div>
   )

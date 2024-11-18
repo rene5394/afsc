@@ -30,7 +30,7 @@ const Map: React.FC<MapProps> = ({ profiles, selectedTagId }) => {
     <MapContainer
       center={[25.5, -25.5]}
       zoom={2}
-      style={{ height: '400px', width: '100%' }}
+      className='h-[250px] md:h-[400px] w-full'
     >
       <TileLayer
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'

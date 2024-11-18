@@ -32,11 +32,11 @@ const TagsSidebar: React.FC<TagsSidebarProps> = ({
   }, [])
 
   return (
-    <div className='flex-none w-[165px] mr-8'>
+    <div className='grid grid-cols-2 md:grid-cols-1 gap-2 mb-3 md:w-[165px] md:mr-8 md:mb-0'>
       {tags.map((tag) => (
         <button
           key={tag.id}
-          className={`w-full text-sm text-white py-2 mb-2 ${
+          className={`w-full text-xs md:text-sm text-white py-2 mb-2 ${
             selectedTagId === tag.id ? 'bg-red' : 'bg-black'
           }`}
           onClick={() => handleTagClick(tag.id)}
