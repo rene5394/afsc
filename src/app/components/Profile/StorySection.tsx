@@ -15,18 +15,20 @@ const StorySection: React.FC<StorySectionProps> = ({ profile }) => {
 
   return (
     <>
-      <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto pt-4 pb-10'>
-        <div className='flex items-start gap-6'>
-          <div className='w-1/2 pr-4'>
+      <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto md:pt-4 pb-10'>
+        <div className='md:flex md:items-start md:gap-6'>
+          <div className='md:w-1/2 pr-4'>
             <h2 className='text-3xl'>TRAVEL STORY</h2>
             <hr className='border-t border-gray-300 mt-2 mb-4' />
             <div
               id='story-text'
-              className='h-[250px] overflow-y-auto'
+              className={`overflow-y-auto ${
+                profile.story?.length > 0 ? 'h-[250px]' : 'h-0'
+              }`}
               dangerouslySetInnerHTML={{ __html: profile.story }}
             />
           </div>
-          <div className='w-1/2 mt-6'>
+          <div className='md:w-1/2 mt-6'>
             {photoAssets.length > 0 && (
               <Swiper
                 spaceBetween={10}

@@ -13,12 +13,12 @@ const PhotoSection: React.FC<PhotoSectionProps> = ({ profile }) => {
           <img src='/images/profile-default-photo.jpg' alt='placeholder' />
         </div>
         <div className='flex-auto ml-6'>
-          <h1 className='text-5xl'>{profile.name}</h1>
-          <div className='flex'>
+          <h1 className='text-4xl md:text-5xl'>{profile.name}</h1>
+          <div className='md:flex'>
             {profile.tags.map((tag, index) => (
               <button
                 key={tag.id}
-                className={`text-sm text-white px-4 py-2 mb-2 mr-2 ${
+                className={`text-xs md:text-sm text-nowrap text-white px-4 py-2 mb-2 mr-2 ${
                   index === 0 ? 'bg-red' : 'bg-black'
                 }`}
               >
