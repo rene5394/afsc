@@ -5,7 +5,7 @@ const WelcomeSection: React.FC = () => {
     <section className='bg-black text-white text-center py-24'>
       <div className='container mx-auto px-6'>
         <h1 className='lg:text-[104px] md:text-[80px] text-[50px] leading-none'>
-          WELCOME TO TRACES
+          TRACES
         </h1>
         <p className='max-w-4xl lg:text-xl text-l mx-auto'>
           Discover the narratives of migrants globally, individuals who have

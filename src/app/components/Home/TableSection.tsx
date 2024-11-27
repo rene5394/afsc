@@ -89,7 +89,7 @@ const TableSection: React.FC = () => {
 
   return (
     <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto py-10'>
-      <h2 className='text-4xl'>CASES/PERSONAS</h2>
+      <h2 className='text-4xl'>PEOPLE</h2>
       <hr className='border-t border-gray-300 mt-2 mb-4' />
       <div className='overflow-x-visible overflow-y-hidden pb-6'>
         <table className='w-full overflow-x-visible table-auto md:mt-5'>
