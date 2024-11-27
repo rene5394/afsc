@@ -133,6 +133,14 @@ header a span {
 }
 
 /* ======================
+   Map Styles
+====================== */
+.custom-black-marker {
+  margin-top: -5px !important;
+  margin-left: -5px !important;
+}
+
+/* ======================
    Footer Styles
 ====================== */
 footer nav a span,

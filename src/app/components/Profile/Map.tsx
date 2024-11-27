@@ -25,6 +25,13 @@ const redIcon = L.divIcon({
   iconAnchor: [10, 10],
 })
 
+const blackIcon = L.divIcon({
+  className: 'custom-black-marker',
+  html: '<div style="background-color: black; border: 2px solid black; border-radius: 50%; width: 10px; height: 10px;"></div>',
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+})
+
 const Map: React.FC<MapProps> = ({ profileRoutes }) => {
   const polylinePositions: LatLngTuple[] = profileRoutes.map((route) => [
     parseFloat(route.latitude),
@@ -44,23 +51,31 @@ const Map: React.FC<MapProps> = ({ profileRoutes }) => {
 
       {profileRoutes.length > 0 && (
         <>
-          <Marker position={polylinePositions[0]} icon={greenIcon}>
-            <Popup>{profileRoutes[0].location}</Popup>
-          </Marker>
+          {profileRoutes.map((route, index) => {
+            let icon = blackIcon
+
+            if (index === 0) {
+              icon = greenIcon
+            } else if (index === profileRoutes.length - 1) {
+              icon = redIcon
+            }
+
+            return (
+              <Marker
+                key={route.id}
+                position={[
+                  parseFloat(route.latitude),
+                  parseFloat(route.longitude),
+                ]}
+                icon={icon}
+              >
+                <Popup>{route.location}</Popup>
+              </Marker>
+            )
+          })}
 
           {profileRoutes.length > 1 && (
-            <>
-              <Marker
-                position={polylinePositions[polylinePositions.length - 1]}
-                icon={redIcon}
-              >
-                <Popup>
-                  {profileRoutes[profileRoutes.length - 1].location}
-                </Popup>
-              </Marker>
-
-              <Polyline positions={polylinePositions} color='#1e8dd3' />
-            </>
+            <Polyline positions={polylinePositions} color='#1e8dd3' />
           )}
         </>
       )}
