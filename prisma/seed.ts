@@ -18,6 +18,7 @@ async function seedTags() {
       { name: 'Economic Migration' },
       { name: 'Violence' },
       { name: 'Deportation' },
+      { name: 'Asylum' },
     ],
   })
   console.log('Tags seeded:', tags)
