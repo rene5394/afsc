@@ -6,11 +6,13 @@ interface PhotoSectionProps {
 }
 
 const PhotoSection: React.FC<PhotoSectionProps> = ({ profile }) => {
+  const photoSrc = profile.photo || '/images/profile-default-photo.jpg'
+
   return (
     <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto pt-1 pb-2'>
       <div className='flex items-start'>
         <div className='flex-none w-[150px]'>
-          <img src='/images/profile-default-photo.jpg' alt='placeholder' />
+          <img src={photoSrc} alt='placeholder' />
         </div>
         <div className='flex-auto ml-6'>
           <h1 className='text-4xl md:text-5xl'>{profile.name}</h1>
