@@ -9,7 +9,7 @@ const Sidebar: React.FC = () => {
   const isActive = (href: string) => pathname === href
 
   return (
-    <aside className='w-64 bg-gray-100 p-4 h-full flex flex-col'>
+    <aside className='w-64 bg-gray-100 p-4 sticky h-screen overflow-y-auto'>
       <img
         className='hidden lg:block max-w-[150px] mb-8'
         src='https://afsc.org/sites/default/files/2022-08/logo.svg'
