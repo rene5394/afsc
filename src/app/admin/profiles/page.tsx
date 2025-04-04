@@ -1,3 +1,5 @@
+import TableSection from '@/app/components/Admin/Profiles/TableSection'
+
 export default async function Profiles() {
-  return <h1>Profiles</h1>
+  return <TableSection />
 }
