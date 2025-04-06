@@ -1,3 +1,5 @@
+import TableSection from '@/app/components/Admin/Tags/TableSection'
+
 export default async function Tags() {
-  return <h1>Tags</h1>
+  return <TableSection />
 }
