@@ -12,6 +12,7 @@ model Profile {
   name         String
   story        String?        @db.Text
   photo        String?
+  active       Boolean       @default(true)
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime?      @updatedAt @map("updated_at")
   ProfileTag   ProfileTag[]
@@ -26,6 +27,7 @@ model Profile {
 model Tag {
   id         Int          @id @default(autoincrement())
   name       String       @unique
+  active     Boolean      @default(true)
   createdAt  DateTime     @default(now()) @map("created_at")
   updatedAt  DateTime?    @updatedAt @map("updated_at")
   ProfileTag ProfileTag[]
