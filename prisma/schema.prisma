@@ -11,6 +11,7 @@ model Profile {
   id           Int            @id @default(autoincrement())
   name         String
   story        String?        @db.Text
+  author       String?
   photo        String?
   active       Boolean       @default(true)
   createdAt    DateTime       @default(now()) @map("created_at")
