@@ -7,7 +7,9 @@ export interface Profile {
   id: number
   name: string
   story: string
+  author: string
   photo: string
+  active: boolean
   createdAt: string
   updatedAt: string
   tags: Tag[]
