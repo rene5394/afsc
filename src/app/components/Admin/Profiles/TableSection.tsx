@@ -22,9 +22,12 @@ export default async function TableSection() {
   return (
     <div className='container 2xl:max-w-[1200px] max-w-full py-12 px-14'>
       <h1 className='text-5xl'>PROFILES</h1>
-      <button className='my-5 px-4 py-2 bg-black text-white rounded'>
+      <a
+        href='/admin/profiles/create'
+        className='inline-block my-5 px-4 py-2 bg-black text-white rounded'
+      >
         Add New Profile
-      </button>
+      </a>
       <div className='w-full overflow-x-visible overflow-y-hidden'>
         <table
           id='table-profiles'
