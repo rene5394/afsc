@@ -41,6 +41,8 @@ thead {
   font-family: var(--font-bebas-neue);
 }
 
+#table-profiles tbody td:first-child,
+#table-profiles tbody td:nth-child(5),
 #table-tags tbody td:first-child,
 #table-tags tbody td:nth-child(2) {
   font-family: var(--font-acta-bold);
