@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import { z } from 'zod'
+import { act } from 'react'
 
 const ITEMS_PER_PAGE = 10
 
@@ -255,6 +256,7 @@ export async function POST(req: NextRequest) {
       name: createdProfile.name,
       story: createdProfile.story,
       photo: createdProfile.photo,
+      active: createdProfile.active,
       tags: createdProfile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,
@@ -320,6 +322,7 @@ export async function GET(req: NextRequest) {
       name: profile.name,
       story: profile.story,
       photo: profile.photo,
+      active: profile.active,
       tags: profile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,
