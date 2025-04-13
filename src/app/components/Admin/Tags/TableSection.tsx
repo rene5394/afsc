@@ -19,7 +19,7 @@ export default async function TableSection() {
   const tags: Tag[] = (await fetchTags()) || []
 
   return (
-    <div className='container xl:max-w-[1024px] max-w-full py-12 px-14'>
+    <div className='container 2xl:max-w-[1200 px] max-w-full py-12 px-14'>
       <h1 className='text-5xl'>TAGS</h1>
       <button className='my-5 px-4 py-2 bg-black text-white rounded'>
         Add New Tag
