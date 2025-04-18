@@ -60,7 +60,12 @@ export default async function TableSection() {
             {profiles.map((profile) => (
               <tr key={profile.id} className='odd:bg-white even:bg-gray-100'>
                 <td className='px-6 py-4 text-sm lg:text-base whitespace-nowrap pr-4'>
-                  {profile.name}
+                  <a
+                    href={`/admin/profiles/${profile.id}`}
+                    className='text-blue-600 hover:underline'
+                  >
+                    {profile.name}
+                  </a>
                 </td>
                 <td className='px-6 py-4 text-sm lg:text-base whitespace-nowrap pr-4'>
                   {profile.routes[0]?.location}
