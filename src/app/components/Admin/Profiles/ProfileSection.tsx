@@ -2,11 +2,25 @@
 
 import React from 'react'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import Select from 'react-select'
+import SortableRoute from '@/app/components/Admin/Profiles/SortableRoute'
+import ProfileTagsSelect from '@/app/components/Admin/Profiles/ProfileTagSelect'
 import type { Profile } from '@/modules/profile/domain/Profile'
 import type { Tag } from '@/modules/tag/domain/Tag'
+import { UpdateProfileSchema } from '@/modules/profile/application/dtos/UpdateProfileDTO'
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
@@ -25,36 +39,42 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, tags }) => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-  } = useForm<Profile>({
-    defaultValues: profile,
-  })
+  } = useForm<Profile>({ defaultValues: profile })
 
   const {
     fields: routeFields,
-    append: appendRoute,
-    remove: removeRoute,
-    move: moveRoute,
+    append,
+    remove,
+    move,
   } = useFieldArray({
     control,
     name: 'routes',
   })
 
-  const tagOptions = tags.map((tag) => ({
-    value: tag.id,
-    label: tag.name,
-  }))
-
-  const selectedTags = profile.tags.map((tag) => ({
-    value: tag.id,
-    label: tag.name,
-  }))
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    })
+  )
 
   const onSubmit = async (data: Profile) => {
+    const dto = {
+      name: data.name,
+      author: data.author,
+      story: data.story,
+      photo: data.photo,
+      tagIds: data.tags.map((tag) => tag.id),
+      routes: data.routes,
+    }
+
     try {
-      const res = await fetch(`/api/profiles/${profile.id}`, {
+      const validatedData = UpdateProfileSchema.parse(dto)
+      console.log('Data', data)
+
+      const res = await fetch(`/api/v1/profiles/${profile.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(validatedData),
       })
       if (!res.ok) throw new Error('Failed to update profile')
       router.push(`/admin/profiles/${profile.id}`)
@@ -67,7 +87,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, tags }) => {
     <div className='container 2xl:max-w-[1200px] max-w-full py-12 px-6'>
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-6 mb-12'>
         <div>
-          <label className='block font-medium'>Name</label>
+          <h3 className='text-2xl font-semibold mb-2'>Name</h3>
           <input
             type='text'
             {...register('name', { required: 'Name is required' })}
@@ -79,7 +99,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, tags }) => {
         </div>
 
         <div>
-          <label className='block font-medium'>Author</label>
+          <h3 className='text-2xl font-semibold mb-2'>Author</h3>
           <input
             type='text'
             {...register('author')}
@@ -88,7 +108,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, tags }) => {
         </div>
 
         <div>
-          <label className='block font-medium'>Story</label>
+          <h3 className='text-2xl font-semibold mb-4'>Story</h3>
           <Controller
             name='story'
             control={control}
@@ -103,93 +123,66 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, tags }) => {
           />
         </div>
 
-        <div className='flex items-center gap-2'>
-          <input type='checkbox' {...register('active')} />
-          <label className='font-medium'>Active</label>
+        <div>
+          <h3 className='text-2xl font-semibold mb-2'>Tags</h3>
+          <ProfileTagsSelect control={control} tags={tags} />
         </div>
 
         <div>
-          <h3 className='text-2xl font-semibold'>Tags</h3>
-          <Controller
-            control={control}
-            name='tags'
-            render={({ field }) => (
-              <Select<{ value: number; label: string }, true>
-                isMulti
-                options={tags.map((tag) => ({
-                  value: tag.id,
-                  label: tag.name,
-                }))}
-                value={(field.value || []).map((tag) => ({
-                  value: tag.id,
-                  label: tag.name,
-                }))}
-                onChange={(selected) => {
-                  const mapped = (selected || []).map((option) => ({
-                    id: option.value,
-                    name: option.label,
-                    active: true,
-                    createdAt: '',
-                    updatedAt: '',
-                  }))
-                  field.onChange(mapped)
-                }}
-                className='basic-multi-select'
-                classNamePrefix='select'
-              />
-            )}
-          />
-        </div>
+          <h3 className='text-2xl font-semibold mb-2'>Routes (Drag & Drop)</h3>
 
-        <div>
-          <h3 className='text-2xl font-semibold'>Routes</h3>
-          {routeFields.map((route, index) => (
-            <div key={route.id} className='flex flex-col gap-2 mb-4'>
-              <input
-                placeholder='Location'
-                {...register(`routes.${index}.location`)}
-                className='border p-2 rounded'
-              />
-              <input
-                placeholder='Latitude'
-                {...register(`routes.${index}.latitude`)}
-                className='border p-2 rounded'
-              />
-              <input
-                placeholder='Longitude'
-                {...register(`routes.${index}.longitude`)}
-                className='border p-2 rounded'
-              />
-              <input
-                type='number'
-                placeholder='Order'
-                {...register(`routes.${index}.orderNumber`)}
-                className='border p-2 rounded'
-              />
-              <button
-                type='button'
-                onClick={() => removeRoute(index)}
-                className='text-red-500'
-              >
-                Remove Route
-              </button>
-            </div>
-          ))}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={(event) => {
+              const { active, over } = event
+              if (active.id !== over?.id) {
+                const oldIndex = routeFields.findIndex(
+                  (route) => route.id === active.id
+                )
+                const newIndex = routeFields.findIndex(
+                  (route) => route.id === over?.id
+                )
+                move(oldIndex, newIndex)
+
+                const reordered = arrayMove(routeFields, oldIndex, newIndex)
+                reordered.forEach((_, idx) => {
+                  setValue(`routes.${idx}.orderNumber`, idx + 1)
+                })
+              }
+            }}
+          >
+            <SortableContext
+              items={routeFields.map((route) => route.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {routeFields.map((route, index) => (
+                <SortableRoute
+                  key={route.id}
+                  id={route.id}
+                  index={index}
+                  register={register}
+                  remove={() => remove(index)}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+
           <button
             type='button'
             onClick={() =>
-              appendRoute({
+              append({
                 id: 0,
                 location: '',
                 latitude: '',
                 longitude: '',
-                orderNumber: routeFields.length,
+                orderNumber: routeFields.length + 1,
                 profileId: profile.id,
                 createdAt: '',
                 updatedAt: '',
               })
             }
-            className='text-blue-500 mt-2'
+            className='text-blue-500 mt-4'
           >
             + Add Route
           </button>
