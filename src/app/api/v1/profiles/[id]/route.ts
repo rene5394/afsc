@@ -1,8 +1,78 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
+import { S3Client } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
 import { UpdateProfileSchema } from '@/modules/profile/application/dtos/UpdateProfileDTO'
+import { create } from 'axios'
+
+enum AssetType {
+  IMAGE = 'image',
+  AUDIO = 'audio',
+  VIDEO = 'video',
+}
+const AssetTypeIdMap = {
+  [AssetType.IMAGE]: 1,
+  [AssetType.AUDIO]: 2,
+  [AssetType.VIDEO]: 3,
+} as const
 
 const prisma = new PrismaClient()
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+})
+
+async function uploadToS3(file: File, folder: string) {
+  const uploadParams = {
+    Bucket: process.env.AWS_BUCKET_NAME!,
+    Key: `${folder}/${Date.now()}_${file.name}`,
+    Body: file.stream(),
+    ContentType: file.type || 'application/octet-stream',
+  }
+
+  try {
+    const upload = new Upload({
+      client: s3,
+      params: uploadParams,
+    })
+
+    await upload.done()
+    return `https://${uploadParams.Bucket}.s3.amazonaws.com/${uploadParams.Key}`
+  } catch (error) {
+    console.error('Error uploading to S3:', error)
+    throw new Error('Failed to upload to S3')
+  }
+}
+
+function parseNestedFormData(formData: FormData) {
+  const parsedData: Record<string, any> = {}
+
+  formData.forEach((value, key) => {
+    const keys = key.split(/\[|\]\[|\]/).filter(Boolean)
+    let current = parsedData
+
+    keys.forEach((part, index) => {
+      if (index === keys.length - 1) {
+        if (Array.isArray(current)) {
+          current.push(value)
+        } else {
+          current[part] = value instanceof File ? value : value.toString()
+        }
+      } else {
+        if (!current[part]) {
+          current[part] = isNaN(Number(keys[index + 1])) ? {} : []
+        }
+        current = current[part]
+      }
+    })
+  })
+
+  return parsedData
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -55,6 +125,9 @@ export async function GET(req: NextRequest) {
         title: link.title,
         url: link.url,
       })),
+      active: profile.active,
+      createdAt: profile.createdAt,
+      updatedAt: profile.updatedAt,
     }
 
     return NextResponse.json(
@@ -74,6 +147,9 @@ export async function PUT(req: NextRequest) {
     const id = Number(req.nextUrl.pathname.split('/')[4])
     const profile = await prisma.profile.findUnique({
       where: { id },
+      include: {
+        ProfileAsset: true,
+      },
     })
 
     if (!profile) {
@@ -83,8 +159,35 @@ export async function PUT(req: NextRequest) {
       )
     }
 
-    const body = await req.json()
-    const parsed = UpdateProfileSchema.safeParse(body)
+    const formData = await req.formData()
+    const body = parseNestedFormData(formData)
+
+    if (body.tagIds) {
+      body.tagIds = body.tagIds.map((id: string) => parseInt(id))
+    }
+
+    if (body.routes) {
+      body.routes = body.routes.map((route: any) => ({
+        ...route,
+        orderNumber: parseInt(route.orderNumber, 10),
+      }))
+    }
+
+    if (body.assets) {
+      body.assets = body.assets.map((asset: any) => ({
+        ...asset,
+        id: parseInt(asset.id, 10),
+      }))
+    }
+
+    const parsed = UpdateProfileSchema.safeParse({
+      ...body,
+      photo: formData.get('photo'),
+      tagIds: body.tagIds || [],
+      assets: body.assets || [],
+      routes: body.routes || [],
+      links: body.links || [],
+    })
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -93,11 +196,12 @@ export async function PUT(req: NextRequest) {
       )
     }
 
-    const { tagIds, routes = [], ...profileData } = parsed.data
+    const { tagIds, assets = [], routes = [], ...profileData } = parsed.data
 
-    const [currentTags, currentRoutes] = await Promise.all([
+    const [currentTags, currentRoutes, currentAssets] = await Promise.all([
       prisma.profileTag.findMany({ where: { profileId: id } }),
       prisma.profileRoute.findMany({ where: { profileId: id } }),
+      prisma.profileAsset.findMany({ where: { profileId: id } }),
     ])
 
     const currentTagIds = currentTags.map((profileTag) => profileTag.tagId)
@@ -118,7 +222,45 @@ export async function PUT(req: NextRequest) {
       currentRouteIds.includes(route.id!)
     )
 
-    const [, , , , updatedProfile] = await prisma.$transaction([
+    const currentAssetIds = currentAssets.map((asset) => asset.id)
+    const incomingAssetIds = (assets || [])
+      .filter((asset) => asset.id !== 0)
+      .map((asset) => asset.id!)
+    const assetsToAdd = (assets || []).filter((asset) => asset.id === 0)
+    const assetsToRemove = currentAssetIds.filter(
+      (id) => !incomingAssetIds.includes(id)
+    )
+
+    const uploadedAssets = await Promise.all(
+      assetsToAdd.map(async (asset) => {
+        if (asset.type === AssetType.IMAGE || asset.type === AssetType.AUDIO) {
+          const file = asset.file as File
+          const folder = asset.type === AssetType.IMAGE ? 'images' : 'audios'
+          const uploadedUrl = await uploadToS3(file, folder)
+
+          return {
+            url: uploadedUrl,
+            type: asset.type,
+          }
+        }
+
+        if (asset.type === AssetType.VIDEO) {
+          return {
+            url: asset.url!,
+            type: asset.type,
+          }
+        }
+
+        throw new Error('Unknown asset type')
+      })
+    )
+
+    const validAssets = uploadedAssets.map((asset) => ({
+      url: asset.url,
+      typeId: AssetTypeIdMap[asset.type as AssetType],
+    }))
+
+    const [, , , , , , , updatedProfile] = await prisma.$transaction([
       ...tagsToRemove.map((tagId) =>
         prisma.profileTag.deleteMany({
           where: {
@@ -161,6 +303,22 @@ export async function PUT(req: NextRequest) {
           },
         })
       ),
+      ...assetsToRemove.map((assetId) =>
+        prisma.profileAsset.delete({
+          where: {
+            id: assetId,
+          },
+        })
+      ),
+      ...validAssets.map((asset) =>
+        prisma.profileAsset.create({
+          data: {
+            profileId: id,
+            url: asset.url,
+            typeId: asset.typeId,
+          },
+        })
+      ),
       prisma.profile.update({
         where: { id },
         data: profileData as any,
@@ -172,7 +330,6 @@ export async function PUT(req: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    console.error('Error updating profile:', error)
     return NextResponse.json(
       { status: 500, message: 'Internal Server Error' },
       { status: 500 }
