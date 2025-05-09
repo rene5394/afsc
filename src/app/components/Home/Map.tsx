@@ -36,8 +36,10 @@ const Map: React.FC<MapProps> = ({ profiles, selectedTagId }) => {
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {profiles.map((marker, index) => {
-        const hasMatchingTag = marker.tags.some(
+      {profiles.map((profile, index) => {
+        if (profile.routes.length === 0) return null
+
+        const hasMatchingTag = profile.tags.some(
           (tag) => tag.id === selectedTagId
         )
         const icon = hasMatchingTag ? redIcon : blackIcon
@@ -47,13 +49,13 @@ const Map: React.FC<MapProps> = ({ profiles, selectedTagId }) => {
             key={index}
             position={
               [
-                marker.routes[0].latitude,
-                marker.routes[0].longitude,
+                profile.routes[0]?.latitude,
+                profile.routes[0]?.longitude,
               ] as unknown as LatLngTuple
             }
             icon={icon}
           >
-            <Popup>{marker.routes[0].location}</Popup>
+            <Popup>{profile.routes[0].location}</Popup>
           </Marker>
         )
       })}
