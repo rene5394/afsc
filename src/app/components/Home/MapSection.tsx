@@ -17,21 +17,30 @@ const MapSection: React.FC = () => {
 
   const fetchProfilesUseCase = new FetchProfilesUseCase(new ProfileRepository())
 
-  const fetchProfiles = async (page: number) => {
+  const fetchProfiles = async (page: number): Promise<boolean> => {
     try {
       const { data, meta } = await fetchProfilesUseCase.execute(page)
       setProfiles((prevProfiles) => [...prevProfiles, ...data])
       setShouldFetch(meta.nextPage !== null)
+
+      return true
     } catch (error) {
       console.error('Error fetching profiles:', error)
+
+      return false
     }
   }
 
   useEffect(() => {
     const loadProfiles = async () => {
-      if (shouldFetch) {
-        await fetchProfiles(currentPage)
+      if (!shouldFetch) return
+
+      const success = await fetchProfiles(currentPage)
+
+      if (success) {
         setCurrentPage((prevPage) => prevPage + 1)
+      } else {
+        setShouldFetch(false)
       }
     }
 
