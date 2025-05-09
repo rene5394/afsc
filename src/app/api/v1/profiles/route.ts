@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
-import { z } from 'zod'
-import { act } from 'react'
+import { CreateProfileSchema } from '@/modules/profile/application/dtos/CreateProfileDTO'
 
 const ITEMS_PER_PAGE = 10
 
@@ -18,65 +17,7 @@ const AssetTypeIdMap = {
   [AssetType.VIDEO]: 3,
 } as const
 
-const CreateProfileAssetSchema = z
-  .object({
-    file: z.instanceof(File).optional(),
-    url: z.string().optional(),
-    type: z.enum(Object.values(AssetType) as [string, ...string[]]),
-  })
-  .refine(
-    (data) => {
-      switch (data.type) {
-        case AssetType.IMAGE:
-        case AssetType.AUDIO:
-          return !!data.file
-        case AssetType.VIDEO:
-          return !!data.url
-        default:
-          return false
-      }
-    },
-    {
-      message:
-        'For image and audio, asset is required. For video, url is required.',
-      path: ['asset', 'url'],
-    }
-  )
-
-const CreateProfileRouteSchema = z.object({
-  location: z.string(),
-  latitude: z.string(),
-  longitude: z.string(),
-  orderNumber: z.number(),
-})
-
-const CreateProfileLinkSchema = z.object({
-  title: z.string(),
-  url: z.string(),
-})
-
-const CreateProfileSchema = z
-  .object({
-    name: z.string(),
-    story: z.string().optional(),
-    photo: z.union([z.instanceof(File), z.string(), z.null(), z.undefined()]),
-    tagIds: z.array(z.number()),
-    assets: z.array(CreateProfileAssetSchema).optional(),
-    routes: z.array(CreateProfileRouteSchema).optional(),
-    links: z.array(CreateProfileLinkSchema).optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.photo) {
-        return data.photo instanceof File && data.photo.size > 0
-      }
-      return true
-    },
-    {
-      message: 'The photo field is sent but no file has been selected',
-      path: ['photo'],
-    }
-  )
+const prisma = new PrismaClient()
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -150,7 +91,7 @@ export async function POST(req: NextRequest) {
       }))
     }
 
-    const validationResult = CreateProfileSchema.safeParse({
+    const parsed = CreateProfileSchema.safeParse({
       ...body,
       photo: formData.get('photo'),
       tagIds: body.tagIds || [],
@@ -159,15 +100,15 @@ export async function POST(req: NextRequest) {
       links: body.links || [],
     })
 
-    if (!validationResult.success) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { message: 'Invalid data', errors: validationResult.error.errors },
+        { message: 'Invalid data', errors: parsed.error.format() },
         { status: 400 }
       )
     }
 
-    const { name, photo, story, tagIds, assets, routes, links } =
-      validationResult.data
+    const { name, author, story, photo, tagIds, assets, routes, links } =
+      parsed.data
 
     let photoUrl = ''
     if (photo) {
@@ -199,11 +140,11 @@ export async function POST(req: NextRequest) {
       }) ?? []
     )
 
-    const prisma = new PrismaClient()
     const createdProfile = await prisma.$transaction(async (prisma) => {
       const newProfile = await prisma.profile.create({
         data: {
           name,
+          author,
           story,
           photo: photoUrl,
           ProfileTag: {
@@ -254,9 +195,9 @@ export async function POST(req: NextRequest) {
     const transformedProfile = {
       id: createdProfile.id,
       name: createdProfile.name,
+      author: createdProfile.author,
       story: createdProfile.story,
       photo: createdProfile.photo,
-      active: createdProfile.active,
       tags: createdProfile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,
@@ -278,6 +219,9 @@ export async function POST(req: NextRequest) {
         title: link.title,
         url: link.url,
       })),
+      active: createdProfile.active,
+      createdAt: createdProfile.createdAt,
+      updatedAt: createdProfile.updatedAt,
     }
 
     return NextResponse.json(
@@ -285,7 +229,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.error(error)
+    console.error('ERRORH', error)
     return NextResponse.json(
       { status: 500, message: 'Internal Server Error' },
       { status: 500 }
@@ -298,7 +242,6 @@ export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams
     const page = parseInt(params.get('page') ?? '1')
     const skip = (page - 1) * ITEMS_PER_PAGE
-    const prisma = new PrismaClient()
 
     const totalProfiles = await prisma.profile.count()
 
@@ -320,9 +263,9 @@ export async function GET(req: NextRequest) {
     const transformedProfiles = profiles.map((profile) => ({
       id: profile.id,
       name: profile.name,
+      author: profile.author,
       story: profile.story,
       photo: profile.photo,
-      active: profile.active,
       tags: profile.ProfileTag.map((profileTag) => ({
         id: profileTag.tag.id,
         name: profileTag.tag.name,
@@ -344,6 +287,9 @@ export async function GET(req: NextRequest) {
         title: link.title,
         url: link.url,
       })),
+      active: profile.active,
+      createdAt: profile.createdAt,
+      updatedAt: profile.updatedAt,
     }))
 
     const totalPages = Math.ceil(totalProfiles / ITEMS_PER_PAGE)

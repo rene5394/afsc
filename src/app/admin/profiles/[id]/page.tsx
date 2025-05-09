@@ -32,7 +32,11 @@ export default async function ProfilePage({
       throw new Error('Tags not found')
     }
 
-    return profile && <ProfileSection profile={profile} tags={tags} />
+    return (
+      profile && (
+        <ProfileSection key={profile.updatedAt} profile={profile} tags={tags} />
+      )
+    )
   } catch (error) {
     return <h1 className='text-2xl mx-12 my-12'>Profile or tags not found</h1>
   }
