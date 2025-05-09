@@ -198,6 +198,12 @@ export async function PUT(req: NextRequest) {
 
     const { tagIds, assets = [], routes = [], ...profileData } = parsed.data
 
+    if (parsed.data.photo instanceof File) {
+      const file = parsed.data.photo as File
+      const uploadedUrl = await uploadToS3(file, 'profile-photos')
+      profileData.photo = uploadedUrl
+    }
+
     const [currentTags, currentRoutes, currentAssets] = await Promise.all([
       prisma.profileTag.findMany({ where: { profileId: id } }),
       prisma.profileRoute.findMany({ where: { profileId: id } }),
