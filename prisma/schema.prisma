@@ -7,13 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
 model Profile {
   id           Int            @id @default(autoincrement())
   name         String
   story        String?        @db.Text
   author       String?
   photo        String?
-  active       Boolean       @default(true)
+  active       Boolean        @default(true)
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime?      @updatedAt @map("updated_at")
   ProfileTag   ProfileTag[]
@@ -23,7 +35,6 @@ model Profile {
 
   @@map("profiles")
 }
-
 
 model Tag {
   id         Int          @id @default(autoincrement())
