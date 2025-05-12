@@ -9,7 +9,7 @@ const Sidebar: React.FC = () => {
   const isActive = (href: string) => pathname === href
 
   return (
-    <aside className='w-64 bg-gray-100 p-4 sticky h-screen overflow-y-auto'>
+    <aside className='w-64 bg-gray-100 p-4 pb-0 sticky h-screen overflow-y-auto'>
       <img
         className='hidden lg:block max-w-[150px] mb-8'
         src='https://afsc.org/sites/default/files/2022-08/logo.svg'
@@ -21,46 +21,57 @@ const Sidebar: React.FC = () => {
         alt='AFSC Logo Mobile'
       />
 
-      <nav>
-        <ul className='space-y-2'>
-          <li>
-            <Link
-              href='/admin'
-              className={`block px-2 py-1 rounded hover:text-red-600 ${
-                isActive('/admin')
-                  ? 'font-semibold text-red-600'
-                  : 'text-gray-700'
-              }`}
-            >
-              Dashboard
-            </Link>
-          </li>
-          <li>
-            <Link
-              href='/admin/tags'
-              className={`block px-2 py-1 rounded hover:text-red-600 ${
-                isActive('/admin/tags')
-                  ? 'font-semibold text-red-600'
-                  : 'text-gray-600'
-              }`}
-            >
-              Tags
-            </Link>
-          </li>
-          <li>
-            <Link
-              href='/admin/profiles'
-              className={`block px-2 py-1 rounded hover:text-red-600 ${
-                isActive('/admin/profiles')
-                  ? 'font-semibold text-red-700'
-                  : 'text-gray-700'
-              }`}
-            >
-              Profiles
-            </Link>
-          </li>
-        </ul>
-      </nav>
+      <div className='flex flex-col justify-between h-[calc(100vh-135px)]'>
+        <nav>
+          <ul className='space-y-2'>
+            <li>
+              <Link
+                href='/admin'
+                className={`block px-2 py-1 rounded hover:text-red-600 ${
+                  isActive('/admin')
+                    ? 'font-semibold text-red-600'
+                    : 'text-gray-700'
+                }`}
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                href='/admin/tags'
+                className={`block px-2 py-1 rounded hover:text-red-600 ${
+                  isActive('/admin/tags')
+                    ? 'font-semibold text-red-600'
+                    : 'text-gray-600'
+                }`}
+              >
+                Tags
+              </Link>
+            </li>
+            <li>
+              <Link
+                href='/admin/profiles'
+                className={`block px-2 py-1 rounded hover:text-red-600 ${
+                  isActive('/admin/profiles')
+                    ? 'font-semibold text-red-700'
+                    : 'text-gray-700'
+                }`}
+              >
+                Profiles
+              </Link>
+            </li>
+          </ul>
+        </nav>
+
+        <form method='POST' action='/api/v1/auth/logout'>
+          <button
+            type='submit'
+            className='block w-full text-left px-2 py-1 rounded font-semibold  text-gray-700 hover:text-red-600'
+          >
+            Logout
+          </button>
+        </form>
+      </div>
     </aside>
   )
 }

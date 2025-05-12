@@ -112,7 +112,8 @@ header a span {
 /* ======================
    Admin Sidebar Styles
 ====================== */
-aside a {
+aside a,
+aside button {
   font-family: var(--font-bonnie-condensed-bold);
   font-weight: 700;
   letter-spacing: 0.1px;
