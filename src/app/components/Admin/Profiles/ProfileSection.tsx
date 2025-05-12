@@ -114,6 +114,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ profile, tags }) => {
       })
 
       data.routes.forEach((route, index) => {
+        formData.append(`routes[${index}][id]`, route.id.toString())
         formData.append(`routes[${index}][location]`, route.location)
         formData.append(`routes[${index}][latitude]`, route.latitude)
         formData.append(`routes[${index}][longitude]`, route.longitude)

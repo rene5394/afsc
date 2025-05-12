@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import { UpdateProfileSchema } from '@/modules/profile/application/dtos/UpdateProfileDTO'
-import { create } from 'axios'
 
 enum AssetType {
   IMAGE = 'image',
@@ -169,6 +168,7 @@ export async function PUT(req: NextRequest) {
     if (body.routes) {
       body.routes = body.routes.map((route: any) => ({
         ...route,
+        id: parseInt(route.id, 10) || 0,
         orderNumber: parseInt(route.orderNumber, 10),
       }))
     }
