@@ -11,6 +11,7 @@ export async function middleware(request: NextRequest) {
   const isAdminRoot = pathname === '/admin'
   const isAdminPath = pathname.startsWith('/admin')
   const isApiPath = pathname.startsWith('/api')
+  const isApiAuthLogin = pathname === '/api/v1/auth/login'
 
   if (isAuthPage) {
     if (jwt && JWT_SECRET) {
@@ -45,6 +46,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(`${APP_URL}/login`)
     }
 
+    return NextResponse.next()
+  }
+
+  if (isApiAuthLogin) {
     return NextResponse.next()
   }
 
