@@ -2,8 +2,11 @@ export interface User {
   id: number
   name: string
   email: string
-  password: string
-  createdAt: string
-  updatedAt: string
+  createdAt: Date
+  updatedAt: Date | null
   active: boolean
+}
+
+export interface UserWithPassword extends User {
+  password: string
 }
