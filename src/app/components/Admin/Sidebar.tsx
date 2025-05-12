@@ -21,7 +21,7 @@ const Sidebar: React.FC = () => {
         alt='AFSC Logo Mobile'
       />
 
-      <div className='flex flex-col justify-between h-[calc(100vh-135px)]'>
+      <div className='flex flex-col justify-between lg:h-[calc(100vh-135px)] h-[calc(100vh-82px)]'>
         <nav>
           <ul className='space-y-2'>
             <li>
