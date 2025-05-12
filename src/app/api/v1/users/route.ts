@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt'
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { CreateUserSchema } from '@/modules/user/application/dtos/CreateUserDTO'
+import { User } from '@/modules/user/domain/User'
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,15 +41,14 @@ export async function POST(req: NextRequest) {
       email: createdUser.email,
       active: createdUser.active,
       createdAt: createdUser.createdAt,
-      updatedAt: createdUser.updatedAt,
-    }
+      updatedAt: createdUser.updatedAt ? createdUser.updatedAt : null,
+    } as User
 
     return NextResponse.json(
       { status: 200, message: 'User created', data: transformedUser },
       { status: 200 }
     )
   } catch (error) {
-    console.log('Error creating user:', error)
     return NextResponse.json(
       { status: 500, message: 'Internal Server Error' },
       { status: 500 }
