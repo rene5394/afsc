@@ -2,6 +2,6 @@ export interface Tag {
   id: number
   name: string
   active: boolean
-  createdAt: string
-  updatedAt: string
+  createdAt: Date
+  updatedAt: Date | null
 }
