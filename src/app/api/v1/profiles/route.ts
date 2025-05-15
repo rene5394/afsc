@@ -221,9 +221,11 @@ export async function POST(req: NextRequest) {
         url: link.url,
       })),
       active: createdProfile.active,
-      createdAt: createdProfile.createdAt,
-      updatedAt: createdProfile.updatedAt,
-    }
+      createdAt: createdProfile.createdAt.toISOString(),
+      updatedAt: createdProfile.updatedAt
+        ? createdProfile.updatedAt.toISOString()
+        : null,
+    } as ProfileResponseDTO
 
     return NextResponse.json(
       { status: 201, message: 'Profile created', data: transformedProfile },
