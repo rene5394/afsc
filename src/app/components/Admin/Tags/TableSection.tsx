@@ -1,9 +1,9 @@
 import { FetchTagsUseCase } from '@/modules/tag/application/FetchTagsUseCase'
-import { TagRepository } from '@/modules/tag/infrastructure/TagRepository'
+import { TagRepositoryServer } from '@/modules/tag/infrastructure/TagRepositoryServer'
 
 import { Tag } from '@/modules/tag/domain/Tag'
 
-const fetchTagsUseCase = new FetchTagsUseCase(new TagRepository())
+const fetchTagsUseCase = new FetchTagsUseCase(new TagRepositoryServer())
 
 const fetchTags = async () => {
   try {
