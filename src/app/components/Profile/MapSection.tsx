@@ -16,37 +16,50 @@ const MapSection: React.FC<MapSectionProps> = ({ profile }) => {
           <Map profileRoutes={profile.routes} />
         </div>
         <div className='md:w-1/2 md:pl-8'>
-          <h2 className='text-3xl'>THE ROUTE</h2>
-          <hr className='border-t border-gray-300 mt-2 mb-4' />
-          <div className='flex items-start my-2'>
-            <div className='flex-none w-[105px]'>
-              <h3 className='text-lg text-green-400 font-bold'>
-                STARTING FROM
-              </h3>
+          {profile.routes.length > 0 && (
+            <>
+              <h2 className='text-3xl'>THE ROUTE</h2>
+              <hr className='border-t border-gray-300 mt-2 mb-4' />
+              <div className='flex items-start my-2'>
+                <div className='flex-none w-[105px]'>
+                  <h3 className='text-lg text-green-400 font-bold'>
+                    STARTING FROM
+                  </h3>
+                </div>
+                <div className='flex-auto'>
+                  <p className='text-sm'>{profile.routes[0].location}</p>
+                </div>
+              </div>
+              <div className='flex items-start my-2'>
+                <div className='flex-none w-[105px]'>
+                  <h3 className='text-lg text-red-500 font-bold'>CURRENTLY</h3>
+                </div>
+                <div className='flex-auto'>
+                  <p className='text-sm'>
+                    {profile.routes[profile.routes.length - 1].location}
+                  </p>
+                </div>
+              </div>
+              <h2 className='text-3xl mt-8'>THE TRAVEL</h2>
+              <hr className='border-t border-gray-300 mt-2 mb-4' />
+              <ul className='list-disc list-inside'>
+                {profile.routes.map((route) => (
+                  <li key={route.id} className='text-sm'>
+                    {route.location}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {profile.routes.length === 0 && (
+            <div className='flex items-start my-2'>
+              <div className='flex-none'>
+                <h2 className='text-3xl font-bold'>
+                  There are no routes records
+                </h2>
+              </div>
             </div>
-            <div className='flex-auto'>
-              <p className='text-sm'>{profile.routes[0].location}</p>
-            </div>
-          </div>
-          <div className='flex items-start my-2'>
-            <div className='flex-none w-[105px]'>
-              <h3 className='text-lg text-red-500 font-bold'>CURRENTLY</h3>
-            </div>
-            <div className='flex-auto'>
-              <p className='text-sm'>
-                {profile.routes[profile.routes.length - 1].location}
-              </p>
-            </div>
-          </div>
-          <h2 className='text-3xl mt-8'>THE TRAVEL</h2>
-          <hr className='border-t border-gray-300 mt-2 mb-4' />
-          <ul className='list-disc list-inside'>
-            {profile.routes.map((route) => (
-              <li key={route.id} className='text-sm'>
-                {route.location}
-              </li>
-            ))}
-          </ul>
+          )}
         </div>
       </div>
     </div>
