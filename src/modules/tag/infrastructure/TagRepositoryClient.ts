@@ -5,7 +5,7 @@ import { ApiResponse } from '@/shared/types/ApiResponse'
 
 const apiDomainV1 = process.env.NEXT_PUBLIC_API_V1_URL
 
-export class TagRepository implements TagService {
+export class TagRepositoryClient implements TagService {
   async fetchTags(): Promise<Tag[]> {
     try {
       const response = await axios.get<ApiResponse<Tag[]>>(
