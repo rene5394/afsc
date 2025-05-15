@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { FetchTagsUseCase } from '@/modules/tag/application/FetchTagsUseCase'
-import { TagRepository } from '@/modules/tag/infrastructure/TagRepository'
+import { TagRepositoryClient } from '@/modules/tag/infrastructure/TagRepositoryClient'
 import { Tag } from '@/modules/tag/domain/Tag'
 
 interface TagsSidebarProps {
@@ -16,7 +16,7 @@ const TagsSidebar: React.FC<TagsSidebarProps> = ({
 }) => {
   const [tags, setTags] = useState<Tag[]>([])
 
-  const fetchTagsUseCase = new FetchTagsUseCase(new TagRepository())
+  const fetchTagsUseCase = new FetchTagsUseCase(new TagRepositoryClient())
 
   useEffect(() => {
     const fetchTags = async () => {
