@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import { CreateProfileSchema } from '@/modules/profile/application/dtos/CreateProfileDTO'
+import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
 const ITEMS_PER_PAGE = 10
 
@@ -288,9 +289,9 @@ export async function GET(req: NextRequest) {
         url: link.url,
       })),
       active: profile.active,
-      createdAt: profile.createdAt,
-      updatedAt: profile.updatedAt,
-    }))
+      createdAt: profile.createdAt.toISOString(),
+      updatedAt: profile.updatedAt ? profile.updatedAt.toISOString() : null,
+    })) as ProfileResponseDTO[]
 
     const totalPages = Math.ceil(totalProfiles / ITEMS_PER_PAGE)
     const nextPage = page < totalPages ? page + 1 : null

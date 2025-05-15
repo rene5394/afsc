@@ -1,14 +1,14 @@
 import { ReadProfilesUseCase } from '@/modules/profile/application/ReadProfileUseCase'
 import { FetchTagsUseCase } from '@/modules/tag/application/FetchTagsUseCase'
 import { ProfileRepository } from '@/modules/profile/infrastructure/ProfileRepository'
-import { TagRepository } from '@/modules/tag/infrastructure/TagRepository'
+import { TagRepositoryServer } from '@/modules/tag/infrastructure/TagRepositoryServer'
 import { Profile } from '@/modules/profile/domain/Profile'
 import NewProfileSection from '@/app/components/Admin/Profiles/NewProfileSection'
 import { Tag } from '@/modules/tag/domain/Tag'
 
 export default async function CreateProfilePage() {
   const readProfilesUseCase = new ReadProfilesUseCase(new ProfileRepository())
-  const readTagsUseCase = new FetchTagsUseCase(new TagRepository())
+  const readTagsUseCase = new FetchTagsUseCase(new TagRepositoryServer())
 
   try {
     const tags: Tag[] = await readTagsUseCase.execute()

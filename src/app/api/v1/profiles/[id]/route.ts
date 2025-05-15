@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import { UpdateProfileSchema } from '@/modules/profile/application/dtos/UpdateProfileDTO'
+import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
 enum AssetType {
   IMAGE = 'image',
@@ -125,9 +126,9 @@ export async function GET(req: NextRequest) {
         url: link.url,
       })),
       active: profile.active,
-      createdAt: profile.createdAt,
-      updatedAt: profile.updatedAt,
-    }
+      createdAt: profile.createdAt.toISOString(),
+      updatedAt: profile.updatedAt ? profile.updatedAt.toISOString() : null,
+    } as ProfileResponseDTO
 
     return NextResponse.json(
       { status: 200, data: transformedProfile },
