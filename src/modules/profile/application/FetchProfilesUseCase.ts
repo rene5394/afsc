@@ -1,5 +1,5 @@
-import { Profile } from '@/modules/profile/domain/Profile'
 import { ProfileService } from '@/modules/profile/application/ProfileService'
+import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 import { ApiMetaResponse } from '@/shared/types/ApiResponse'
 
 export class FetchProfilesUseCase {
@@ -7,7 +7,7 @@ export class FetchProfilesUseCase {
 
   async execute(
     page: number
-  ): Promise<{ data: Profile[]; meta: ApiMetaResponse }> {
+  ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }> {
     return await this.profileService.fetchProfiles(page)
   }
 }

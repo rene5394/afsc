@@ -1,14 +1,15 @@
 import { Profile } from '@/modules/profile/domain/Profile'
+import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 import { ApiMetaResponse } from '@/shared/types/ApiResponse'
 
 export interface ProfileService {
-  createProfile(profileData: Partial<Profile>): Promise<Profile>
+  createProfile(profileData: Partial<Profile>): Promise<ProfileResponseDTO>
 
-  readProfile(id: number): Promise<Profile | null>
+  readProfile(id: number): Promise<ProfileResponseDTO | null>
 
   updateProfile(profileData: Profile): Promise<Profile | null>
 
   fetchProfiles(
     page: number
-  ): Promise<{ data: Profile[]; meta: ApiMetaResponse }>
+  ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }>
 }

@@ -1,10 +1,10 @@
-import { Profile } from '@/modules/profile/domain/Profile'
+import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 import { ProfileService } from '@/modules/profile/application/ProfileService'
 
 export class ReadProfilesUseCase {
   constructor(private profileService: ProfileService) {}
 
-  async execute(id: number): Promise<Profile | null> {
+  async execute(id: number): Promise<ProfileResponseDTO | null> {
     return await this.profileService.readProfile(id)
   }
 }
