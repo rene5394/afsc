@@ -3,16 +3,18 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { FetchProfilesUseCase } from '@/modules/profile/application/FetchProfilesUseCase'
-import { ProfileRepository } from '@/modules/profile/infrastructure/ProfileRepository'
-import { Profile } from '@/modules/profile/domain/Profile'
+import { ProfileRepositoryClient } from '@/modules/profile/infrastructure/ProfileRepositoryClient'
+import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
 const TableSection: React.FC = () => {
-  const [profiles, setProfiles] = useState<Profile[]>([])
+  const [profiles, setProfiles] = useState<ProfileResponseDTO[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const maxPageButtons = 10
 
-  const fetchProfilesUseCase = new FetchProfilesUseCase(new ProfileRepository())
+  const fetchProfilesUseCase = new FetchProfilesUseCase(
+    new ProfileRepositoryClient()
+  )
 
   useEffect(() => {
     const fetchProfiles = async () => {

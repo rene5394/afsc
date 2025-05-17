@@ -20,7 +20,22 @@ const MapSection: React.FC = () => {
   const fetchProfiles = async (page: number): Promise<boolean> => {
     try {
       const { data, meta } = await fetchProfilesUseCase.execute(page)
-      setProfiles((prevProfiles) => [...prevProfiles, ...data])
+      const profilesData = data.map((item) => ({
+        id: item.id,
+        name: item.name,
+        author: item.author,
+        story: item.story,
+        photo: item.photo,
+        tags: item.tags,
+        assets: item.assets,
+        routes: item.routes,
+        links: item.links,
+        active: item.active,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+      })) as Profile[]
+
+      setProfiles((prevProfiles) => [...prevProfiles, ...profilesData])
       setShouldFetch(meta.nextPage !== null)
 
       return true

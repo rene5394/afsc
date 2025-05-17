@@ -7,6 +7,7 @@ import Container from '@/app/components/Profile/Container'
 import { ReadProfilesUseCase } from '@/modules/profile/application/ReadProfileUseCase'
 import { ProfileRepository } from '@/modules/profile/infrastructure/ProfileRepository'
 import { Profile } from '@/modules/profile/domain/Profile'
+import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
 type ProfilePageParams = {
   id: number
@@ -21,8 +22,23 @@ export default function ProfilePage({ params }: { params: ProfilePageParams }) {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const fetchedProfile = await readProfilesUseCase.execute(id)
-        if (fetchedProfile) {
+        const ProfileResponseDTO: ProfileResponseDTO | null =
+          await readProfilesUseCase.execute(id)
+        if (ProfileResponseDTO) {
+          const fetchedProfile = {
+            id: ProfileResponseDTO.id,
+            name: ProfileResponseDTO.name,
+            author: ProfileResponseDTO.author,
+            story: ProfileResponseDTO.story,
+            photo: ProfileResponseDTO.photo,
+            tags: ProfileResponseDTO.tags,
+            assets: ProfileResponseDTO.assets,
+            routes: ProfileResponseDTO.routes,
+            links: ProfileResponseDTO.links,
+            active: ProfileResponseDTO.active,
+            createdAt: ProfileResponseDTO.createdAt,
+            updatedAt: ProfileResponseDTO.updatedAt,
+          } as Profile
           setProfile(fetchedProfile)
         }
       } catch (error) {

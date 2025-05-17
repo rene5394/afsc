@@ -20,7 +20,6 @@ import SortableRoute from '@/app/components/Admin/Profiles/SortableRoute'
 import ProfileTagsSelect from '@/app/components/Admin/Profiles/ProfileTagSelect'
 import type { Profile } from '@/modules/profile/domain/Profile'
 import type { Tag } from '@/modules/tag/domain/Tag'
-import { UpdateProfileSchema } from '@/modules/profile/application/dtos/UpdateProfileDTO'
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
