@@ -2,6 +2,8 @@
 import { Dialog } from '@headlessui/react'
 import { useState } from 'react'
 import type { Tag } from '@/modules/tag/domain/Tag'
+import { UpdateTagsUseCase } from '@/modules/tag/application/UpdateTagUseCase'
+import { TagRepositoryClient } from '@/modules/tag/infrastructure/TagRepositoryClient'
 
 export default function UpdateTagModal({
   isOpen,
@@ -14,10 +16,21 @@ export default function UpdateTagModal({
   tag: Pick<Tag, 'id' | 'name'>
   onUpdate: (updated: Pick<Tag, 'id' | 'name'>) => void
 }) {
+  const updateTagsUseCase = new UpdateTagsUseCase(new TagRepositoryClient())
+
   const [name, setName] = useState(tag.name)
 
   const handleSave = async () => {
-    await new Promise((res) => setTimeout(res, 500))
+    const updatedTag = await updateTagsUseCase.execute({
+      id: tag.id,
+      name,
+    })
+
+    if (!updatedTag) {
+      console.error('Failed to update tag')
+      return
+    }
+
     onUpdate({ ...tag, name })
     onClose()
   }
