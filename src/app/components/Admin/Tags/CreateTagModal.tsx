@@ -2,6 +2,8 @@
 import { Dialog } from '@headlessui/react'
 import { useState } from 'react'
 import type { Tag } from '@/modules/tag/domain/Tag'
+import { CreateTagsUseCase } from '@/modules/tag/application/CreateTagUseCase'
+import { TagRepositoryClient } from '@/modules/tag/infrastructure/TagRepositoryClient'
 
 export default function CreateTagModal({
   isOpen,
@@ -12,17 +14,20 @@ export default function CreateTagModal({
   onClose: () => void
   onCreate: (newTag: Omit<Tag, 'createdAt' | 'updatedAt'>) => void
 }) {
+  const createTagsUseCase = new CreateTagsUseCase(new TagRepositoryClient())
+
   const [name, setName] = useState('')
 
   const handleCreate = async () => {
     if (!name.trim()) return
 
-    await new Promise((res) => setTimeout(res, 500))
-
-    const newTag = {
-      id: 0,
+    const newTag = await createTagsUseCase.execute({
       name,
-      active: true,
+    })
+
+    if (!newTag) {
+      console.error('Failed to create tag')
+      return
     }
 
     onCreate(newTag)
