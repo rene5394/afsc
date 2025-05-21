@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { Tag } from '@/modules/tag/domain/Tag'
+import { TagRepositoryClient } from '@/modules/tag/infrastructure/TagRepositoryClient'
+import { UpdateTagsUseCase } from '@/modules/tag/application/UpdateTagUseCase'
 import CreateTagModal from '@/app/components/Admin/Tags/CreateTagModal'
 import UpdateTagModal from '@/app/components/Admin/Tags/UpdateTagModal'
 
@@ -13,6 +15,40 @@ export default function TableSection({
   const [tags, setTags] = useState<Tag[]>(existingTags)
   const [editingTag, setEditingTag] = useState<Tag | null>(null)
   const [creatingTag, setCreatingTag] = useState(false)
+
+  const updateTagUseCase = new UpdateTagsUseCase(new TagRepositoryClient())
+
+  const handleActivateTag = async (tag: Tag) => {
+    try {
+      const updatedTag = await updateTagUseCase.execute({
+        id: tag.id,
+        active: true,
+      })
+      setTags((prev) =>
+        prev.map((t) =>
+          t.id === tag.id ? { ...t, active: true, updatedAt: new Date() } : t
+        )
+      )
+    } catch (err) {
+      console.error('Error activating tag:', err)
+    }
+  }
+
+  const handleDeactivateTag = async (tag: Tag) => {
+    try {
+      const updatedTag = await updateTagUseCase.execute({
+        id: tag.id,
+        active: false,
+      })
+      setTags((prev) =>
+        prev.map((t) =>
+          t.id === tag.id ? { ...t, active: false, updatedAt: new Date() } : t
+        )
+      )
+    } catch (err) {
+      console.error('Error deactivating tag:', err)
+    }
+  }
 
   return (
     <div className='container 2xl:max-w-[1200px] max-w-full py-12 px-14'>
@@ -65,13 +101,19 @@ export default function TableSection({
                 </td>
                 <td className='pr-6 py-4 text-sm lg:text-base whitespace-nowrap'>
                   {tag.active ? (
-                    <span className='px-4 py-1 bg-red-500 text-white rounded inline-block'>
+                    <button
+                      onClick={() => handleDeactivateTag(tag)}
+                      className='px-4 py-1 bg-red-500 text-white rounded inline-block'
+                    >
                       Deactivate
-                    </span>
+                    </button>
                   ) : (
-                    <span className='px-4 py-1 bg-green-500 text-white rounded inline-block'>
-                      Activate
-                    </span>
+                    <button
+                      onClick={() => handleActivateTag(tag)}
+                      className='px-4 py-1 bg-green-500 text-white rounded inline-block'
+                    >
+                      Deactivate
+                    </button>
                   )}
                 </td>
               </tr>
