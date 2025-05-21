@@ -1,12 +1,27 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { AuthRepository } from '@/modules/auth/infrastructure/AuthRepository'
+import { LogoutUserUseCase } from '@/modules/auth/application/LogoutUserUseCase'
+
+const logoutUserUseCase = new LogoutUserUseCase(new AuthRepository())
 
 const Sidebar: React.FC = () => {
+  const router = useRouter()
   const pathname = usePathname()
 
   const isActive = (href: string) => pathname === href
+
+  const handleLogout = async () => {
+    try {
+      await logoutUserUseCase.execute()
+
+      router.push('/login')
+    } catch (err: any) {
+      console.error('Logout error:', err)
+    }
+  }
 
   return (
     <aside className='w-64 bg-gray-100 p-4 pb-0 sticky h-screen overflow-y-auto'>
@@ -63,14 +78,12 @@ const Sidebar: React.FC = () => {
           </ul>
         </nav>
 
-        <form method='POST' action='/api/v1/auth/logout'>
-          <button
-            type='submit'
-            className='block w-full text-left px-2 py-1 rounded font-semibold  text-gray-700 hover:text-red-600'
-          >
-            Logout
-          </button>
-        </form>
+        <button
+          onClick={handleLogout}
+          className='block w-full text-left px-2 py-1 rounded font-semibold  text-gray-700 hover:text-red-600'
+        >
+          Logout
+        </button>
       </div>
     </aside>
   )
