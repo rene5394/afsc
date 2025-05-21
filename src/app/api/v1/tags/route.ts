@@ -1,29 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { z } from 'zod'
-
-const CreateTagSchema = z.object({
-  name: z.string(),
-})
+import { CreateTagSchema } from '@/modules/tag/application/dtos/CreateTagDTO'
 
 export async function POST(req: NextRequest) {
   try {
     const prisma = new PrismaClient()
     const body = await req.json()
-    const validationResult = CreateTagSchema.safeParse(body)
+    const parsed = CreateTagSchema.safeParse(body)
 
-    if (!validationResult.success) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { message: 'Invalid data', errors: validationResult.error.errors },
+        { message: 'Invalid data', errors: parsed.error.errors },
         { status: 400 }
       )
     }
 
-    const tag = validationResult.data
+    const tag = parsed.data
     const createdTag = await prisma.tag.create({ data: tag })
 
     return NextResponse.json(
-      { status: 201, message: 'Tag created', data: createdTag },
+      { status: 201, message: 'Tag created sucessfully', data: createdTag },
       { status: 201 }
     )
   } catch (error) {
