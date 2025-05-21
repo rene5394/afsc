@@ -14,4 +14,31 @@ export class TagRepositoryServer implements TagService {
       throw new Error('Error fetching tags')
     }
   }
+
+  async createTag(tag: Partial<Tag>): Promise<Tag | null> {
+    try {
+      const newTag = await prisma.tag.create({
+        data: {
+          name: tag.name || '',
+        },
+      })
+
+      return newTag
+    } catch (error) {
+      throw new Error('Error creating tag')
+    }
+  }
+
+  async updateTag(tag: Partial<Tag>): Promise<Tag | null> {
+    try {
+      const updatedTag = await prisma.tag.update({
+        where: { id: tag.id },
+        data: tag,
+      })
+
+      return updatedTag
+    } catch (error) {
+      throw new Error('Error updating tag')
+    }
+  }
 }

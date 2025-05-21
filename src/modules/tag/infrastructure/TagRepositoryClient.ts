@@ -17,4 +17,30 @@ export class TagRepositoryClient implements TagService {
       throw new Error('Error fetching tags')
     }
   }
+
+  async createTag(tag: Partial<Tag>): Promise<Tag | null> {
+    try {
+      const response = await axios.post<ApiResponse<Tag>>(
+        `${apiDomainV1}/tags`,
+        tag
+      )
+
+      return response.data.data
+    } catch (error) {
+      throw new Error('Error creating tag')
+    }
+  }
+
+  async updateTag(tag: Partial<Tag>): Promise<Tag | null> {
+    try {
+      const response = await axios.put<ApiResponse<Tag>>(
+        `${apiDomainV1}/tags/${tag.id}`,
+        tag
+      )
+
+      return response.data.data
+    } catch (error) {
+      throw new Error('Error updating tag')
+    }
+  }
 }
