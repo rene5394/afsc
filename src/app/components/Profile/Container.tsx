@@ -1,10 +1,9 @@
 import React from 'react'
+import { Profile } from '@/modules/profile/domain/Profile'
 import Breadcrumb from '@/app/components/Profile/Breadcrumb'
 import PhotoSection from '@/app/components/Profile/PhotoSection'
 import MapSection from '@/app/components/Profile/MapSection'
 import StorySection from '@/app/components/Profile/StorySection'
-import { Profile } from '@/modules/profile/domain/Profile'
-import LinkSection from './LinkSection'
 import VideoSection from './VideosSection'
 
 interface ContainerProps {
@@ -19,7 +18,6 @@ const Container: React.FC<ContainerProps> = ({ profile }) => {
       <MapSection profile={profile} />
       <StorySection profile={profile} />
       <VideoSection profileAssets={profile.assets} />
-      <LinkSection profileLinks={profile.links} />
     </>
   )
 }
