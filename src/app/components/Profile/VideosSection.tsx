@@ -5,9 +5,32 @@ interface VideoSectionProps {
   profileAssets: ProfileAsset[]
 }
 
+function convertToEmbedUrl(url: string): string {
+  try {
+    const parsed = new URL(url)
+
+    if (parsed.hostname === 'youtu.be') {
+      return `https://www.youtube.com/embed/${parsed.pathname.slice(1)}`
+    }
+
+    if (parsed.hostname.includes('youtube.com')) {
+      const v = parsed.searchParams.get('v')
+      if (v) return `https://www.youtube.com/embed/${v}`
+    }
+
+    return url
+  } catch {
+    return url
+  }
+}
+
 const VideoSection: React.FC<VideoSectionProps> = ({ profileAssets }) => {
   const videoAsset = profileAssets.find((asset) => asset.typeId === 3)
   const audioAsset = profileAssets.find((asset) => asset.typeId === 2)
+
+  if (videoAsset) {
+    videoAsset.url = convertToEmbedUrl(videoAsset.url)
+  }
 
   return (
     <>
