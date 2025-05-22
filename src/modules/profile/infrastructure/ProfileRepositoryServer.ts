@@ -159,6 +159,75 @@ export class ProfileRepositoryServer implements ProfileService {
     }
   }
 
+  async patchProfile(profileData: Partial<Profile>): Promise<Profile | null> {
+    try {
+      const updatedProfile = await prisma.profile.update({
+        where: { id: profileData.id },
+        data: {
+          active: profileData.active,
+        },
+        include: {
+          ProfileTag: {
+            include: {
+              tag: true,
+            },
+          },
+          ProfileAsset: true,
+          ProfileRoute: true,
+          ProfileLink: true,
+        },
+      })
+
+      if (!updatedProfile) {
+        return null
+      }
+
+      return {
+        ...updatedProfile,
+        tags: updatedProfile.ProfileTag.map((profileTag) => ({
+          id: profileTag.tag.id,
+          name: profileTag.tag.name,
+          active: profileTag.tag.active,
+          createdAt: new Date(profileTag.tag.createdAt),
+          updatedAt: profileTag.tag.updatedAt
+            ? new Date(profileTag.tag.updatedAt)
+            : null,
+        })),
+        assets: updatedProfile.ProfileAsset.map((asset) => ({
+          id: asset.id,
+          url: asset.url,
+          typeId: asset.typeId,
+          profileId: asset.profileId,
+          createdAt: asset.createdAt.toISOString(),
+          updatedAt: asset.updatedAt?.toISOString() || '',
+        })),
+        routes: updatedProfile.ProfileRoute.map((route) => ({
+          id: route.id,
+          location: route.location,
+          latitude: route.latitude,
+          longitude: route.longitude,
+          orderNumber: route.orderNumber,
+          profileId: route.profileId,
+          createdAt: route.createdAt.toISOString(),
+          updatedAt: route.updatedAt?.toISOString() || '',
+        })),
+        links: updatedProfile.ProfileLink.map((link) => ({
+          id: link.id,
+          title: link.title,
+          url: link.url,
+          profileId: link.profileId,
+          createdAt: link.createdAt.toISOString(),
+          updatedAt: link.updatedAt?.toISOString() || '',
+        })),
+        active: updatedProfile.active,
+        createdAt: updatedProfile.createdAt.toISOString(),
+        updatedAt: updatedProfile.updatedAt?.toISOString() || '',
+      } as Profile
+    } catch (error) {
+      throw new Error('Error patching profile')
+    }
+  }
+
   async fetchProfiles(
     page: number = 1
   ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }> {

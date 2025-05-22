@@ -50,6 +50,19 @@ export class ProfileRepositoryClient implements ProfileService {
     }
   }
 
+  async patchProfile(profileData: Partial<Profile>): Promise<Profile | null> {
+    try {
+      const response = await axios.patch<ApiResponse<Profile>>(
+        `${apiDomainV1}/profiles/${profileData.id}`,
+        profileData
+      )
+
+      return response.data.data
+    } catch (error) {
+      throw new Error('Error patching profile')
+    }
+  }
+
   async fetchProfiles(
     page: number = 1
   ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }> {
