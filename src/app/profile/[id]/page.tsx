@@ -5,7 +5,7 @@ import Header from '@/app/components/Header/Header'
 import Footer from '@/app/components/Footer/Footer'
 import Container from '@/app/components/Profile/Container'
 import { ReadProfilesUseCase } from '@/modules/profile/application/ReadProfileUseCase'
-import { ProfileRepository } from '@/modules/profile/infrastructure/ProfileRepository'
+import { ProfileRepositoryClient } from '@/modules/profile/infrastructure/ProfileRepositoryClient'
 import { Profile } from '@/modules/profile/domain/Profile'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
@@ -17,7 +17,9 @@ export default function ProfilePage({ params }: { params: ProfilePageParams }) {
   const { id } = params
   const [profile, setProfile] = useState<Profile>()
 
-  const readProfilesUseCase = new ReadProfilesUseCase(new ProfileRepository())
+  const readProfilesUseCase = new ReadProfilesUseCase(
+    new ProfileRepositoryClient()
+  )
 
   useEffect(() => {
     const fetchProfile = async () => {
