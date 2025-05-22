@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { FetchProfilesUseCase } from '@/modules/profile/application/FetchProfilesUseCase'
+import { PatchProfilesUseCase } from '@/modules/profile/application/PatchProfileUseCase'
 import { ProfileRepositoryClient } from '@/modules/profile/infrastructure/ProfileRepositoryClient'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
@@ -15,6 +16,55 @@ const TableSection: React.FC = () => {
   const fetchProfilesUseCase = new FetchProfilesUseCase(
     new ProfileRepositoryClient()
   )
+  const patchProfilesUseCase = new PatchProfilesUseCase(
+    new ProfileRepositoryClient()
+  )
+
+  const handleActivateProfile = async (profile: ProfileResponseDTO) => {
+    try {
+      const updatedProfile = await patchProfilesUseCase.execute({
+        id: profile.id,
+        active: true,
+      })
+
+      if (!updatedProfile) {
+        return
+      }
+
+      setProfiles((prev) =>
+        prev.map((p) =>
+          p.id === profile.id
+            ? { ...p, active: true, updatedAt: new Date().toISOString() }
+            : p
+        )
+      )
+    } catch (err) {
+      console.error('Error activating tag:', err)
+    }
+  }
+
+  const handleDeactivateProfile = async (profile: ProfileResponseDTO) => {
+    try {
+      const updatedProfile = await patchProfilesUseCase.execute({
+        id: profile.id,
+        active: false,
+      })
+
+      if (!updatedProfile) {
+        return
+      }
+
+      setProfiles((prev) =>
+        prev.map((p) =>
+          p.id === profile.id
+            ? { ...p, active: false, updatedAt: new Date().toISOString() }
+            : p
+        )
+      )
+    } catch (err) {
+      console.error('Error deactivating tag:', err)
+    }
+  }
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -174,13 +224,19 @@ const TableSection: React.FC = () => {
                 </td>
                 <td className='pr-6 py-4 text-sm lg:text-base whitespace-nowrap'>
                   {profile.active ? (
-                    <span className='px-4 py-1 bg-red-500 text-white rounded inline-block'>
-                      {profile.active} Deactivate
-                    </span>
+                    <button
+                      onClick={() => handleDeactivateProfile(profile)}
+                      className='px-4 py-1 bg-red-500 text-white rounded inline-block'
+                    >
+                      Deactivate
+                    </button>
                   ) : (
-                    <span className='px-4 py-1 bg-green-500 text-white rounded inline-block'>
-                      {profile.active} Activate
-                    </span>
+                    <button
+                      onClick={() => handleActivateProfile(profile)}
+                      className='px-4 py-1 bg-green-500 text-white rounded inline-block'
+                    >
+                      Activate
+                    </button>
                   )}
                 </td>
               </tr>
