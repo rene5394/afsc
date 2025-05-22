@@ -372,17 +372,12 @@ export async function PATCH(req: NextRequest) {
         { status: 400 }
       )
     }
-
-    console.log('Parsed data ci:', parsed.data)
-
     const { active } = parsed.data
 
     const patchedProfile = await prisma.profile.update({
       where: { id },
       data: { active },
     })
-
-    console.log('Patched profile:', patchedProfile)
 
     return NextResponse.json(
       { status: 200, message: 'Profile patched', data: patchedProfile },
@@ -403,6 +398,14 @@ export async function DELETE(req: NextRequest) {
 
     const profile = await prisma.profile.findUnique({
       where: { id: Number(id) },
+      include: {
+        ProfileTag: {
+          include: { tag: true },
+        },
+        ProfileAsset: true,
+        ProfileRoute: true,
+        ProfileLink: true,
+      },
     })
 
     if (!profile) {
@@ -413,6 +416,43 @@ export async function DELETE(req: NextRequest) {
     }
 
     await prisma.profile.delete({ where: { id: Number(id) } })
+
+    const transformedProfile = {
+      id: profile.id,
+      name: profile.name,
+      author: profile.author,
+      story: profile.story,
+      photo: profile.photo,
+      tags: profile.ProfileTag.map((profileTag) => ({
+        id: profileTag.tag.id,
+        name: profileTag.tag.name,
+      })),
+      assets: profile.ProfileAsset.map((asset) => ({
+        id: asset.id,
+        url: asset.url,
+        typeId: asset.typeId,
+      })),
+      routes: profile.ProfileRoute.map((route) => ({
+        id: route.id,
+        location: route.location,
+        latitude: route.latitude,
+        longitude: route.longitude,
+        orderNumber: route.orderNumber,
+      })),
+      links: profile.ProfileLink.map((link) => ({
+        id: link.id,
+        title: link.title,
+        url: link.url,
+      })),
+      active: profile.active,
+      createdAt: profile.createdAt.toISOString(),
+      updatedAt: profile.updatedAt?.toISOString() || '',
+    } as ProfileResponseDTO
+
+    return NextResponse.json(
+      { status: 200, data: transformedProfile },
+      { status: 200 }
+    )
   } catch (error) {
     return NextResponse.json(
       { status: 500, message: 'Internal Server Error' },
