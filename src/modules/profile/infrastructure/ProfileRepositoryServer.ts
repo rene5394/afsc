@@ -303,4 +303,62 @@ export class ProfileRepositoryServer implements ProfileService {
       throw new Error('Error fetching profiles')
     }
   }
+
+  async deleteProfile(id: number): Promise<ProfileResponseDTO | null> {
+    try {
+      const profile = await prisma.profile.findUnique({
+        where: { id },
+        include: {
+          ProfileTag: {
+            include: { tag: true },
+          },
+          ProfileAsset: true,
+          ProfileRoute: true,
+          ProfileLink: true,
+        },
+      })
+
+      if (!profile) {
+        return null
+      }
+
+      await prisma.profile.delete({
+        where: { id },
+      })
+
+      return {
+        id: profile.id,
+        name: profile.name,
+        author: profile.author,
+        story: profile.story,
+        photo: profile.photo,
+        tags: profile.ProfileTag.map((profileTag) => ({
+          id: profileTag.tag.id,
+          name: profileTag.tag.name,
+        })),
+        assets: profile.ProfileAsset.map((asset) => ({
+          id: asset.id,
+          url: asset.url,
+          typeId: asset.typeId,
+        })),
+        routes: profile.ProfileRoute.map((route) => ({
+          id: route.id,
+          location: route.location,
+          latitude: route.latitude,
+          longitude: route.longitude,
+          orderNumber: route.orderNumber,
+        })),
+        links: profile.ProfileLink.map((link) => ({
+          id: link.id,
+          title: link.title,
+          url: link.url,
+        })),
+        active: profile.active,
+        createdAt: profile.createdAt.toISOString(),
+        updatedAt: profile.updatedAt?.toISOString() || '',
+      } as ProfileResponseDTO
+    } catch (error) {
+      throw new Error('Error deleting profile')
+    }
+  }
 }

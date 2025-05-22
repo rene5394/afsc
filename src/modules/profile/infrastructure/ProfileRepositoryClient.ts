@@ -76,4 +76,16 @@ export class ProfileRepositoryClient implements ProfileService {
       throw new Error('Error fetching profiles')
     }
   }
+
+  async deleteProfile(id: number): Promise<ProfileResponseDTO | null> {
+    try {
+      const response = await axios.delete<ApiResponse<ProfileResponseDTO>>(
+        `${apiDomainV1}/profiles/${id}`
+      )
+
+      return response.data.data
+    } catch (error) {
+      throw new Error('Error deleting profile')
+    }
+  }
 }
