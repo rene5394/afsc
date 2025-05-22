@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import TagsSidebar from '@/app/components/Home/TagsSidebar'
 import dynamic from 'next/dynamic'
 import { FetchProfilesUseCase } from '@/modules/profile/application/FetchProfilesUseCase'
-import { ProfileRepository } from '@/modules/profile/infrastructure/ProfileRepository'
+import { ProfileRepositoryClient } from '@/modules/profile/infrastructure/ProfileRepositoryClient'
 import { Profile } from '@/modules/profile/domain/Profile'
 
 const Map = dynamic(() => import('./Map'), { ssr: false })
@@ -15,7 +15,9 @@ const MapSection: React.FC = () => {
   const [shouldFetch, setShouldFetch] = useState(true)
   const [selectedTagId, setSelectedTagId] = useState<number>()
 
-  const fetchProfilesUseCase = new FetchProfilesUseCase(new ProfileRepository())
+  const fetchProfilesUseCase = new FetchProfilesUseCase(
+    new ProfileRepositoryClient()
+  )
 
   const fetchProfiles = async (page: number): Promise<boolean> => {
     try {
