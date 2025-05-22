@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
+import { PatchProfileSchema } from '@/modules/profile/application/dtos/PatchProfileDTO'
 import { UpdateProfileSchema } from '@/modules/profile/application/dtos/UpdateProfileDTO'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
@@ -337,6 +338,58 @@ export async function PUT(req: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
+    console.error('Error updating profile:', error)
+    return NextResponse.json(
+      { status: 500, message: 'Internal Server Error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const id = Number(req.nextUrl.pathname.split('/')[4])
+    const profile = await prisma.profile.findUnique({
+      where: { id },
+      include: {
+        ProfileAsset: true,
+      },
+    })
+
+    if (!profile) {
+      return NextResponse.json(
+        { status: 404, message: 'Profile not found' },
+        { status: 404 }
+      )
+    }
+
+    const body = await req.json()
+    const parsed = PatchProfileSchema.safeParse(body)
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { message: 'Invalid data', errors: parsed.error.format() },
+        { status: 400 }
+      )
+    }
+
+    console.log('Parsed data ci:', parsed.data)
+
+    const { active } = parsed.data
+
+    const patchedProfile = await prisma.profile.update({
+      where: { id },
+      data: { active },
+    })
+
+    console.log('Patched profile:', patchedProfile)
+
+    return NextResponse.json(
+      { status: 200, message: 'Profile patched', data: patchedProfile },
+      { status: 200 }
+    )
+  } catch (error) {
+    console.error('Error patching profile:', error)
     return NextResponse.json(
       { status: 500, message: 'Internal Server Error' },
       { status: 500 }
