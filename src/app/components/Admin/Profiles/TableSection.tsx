@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { FetchProfilesUseCase } from '@/modules/profile/application/FetchProfilesUseCase'
 import { PatchProfilesUseCase } from '@/modules/profile/application/PatchProfileUseCase'
+import { DeleteProfileUseCase } from '@/modules/profile/application/DeleteProfileUseCase'
 import { ProfileRepositoryClient } from '@/modules/profile/infrastructure/ProfileRepositoryClient'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
@@ -17,6 +18,10 @@ const TableSection: React.FC = () => {
     new ProfileRepositoryClient()
   )
   const patchProfilesUseCase = new PatchProfilesUseCase(
+    new ProfileRepositoryClient()
+  )
+
+  const deleteProfileUseCase = new DeleteProfileUseCase(
     new ProfileRepositoryClient()
   )
 
@@ -63,6 +68,18 @@ const TableSection: React.FC = () => {
       )
     } catch (err) {
       console.error('Error deactivating tag:', err)
+    }
+  }
+
+  const handleDeleteProfile = async (profileId: number) => {
+    try {
+      const deleted = await deleteProfileUseCase.execute(profileId)
+
+      if (deleted) {
+        setProfiles((prev) => prev.filter((p) => p.id !== profileId))
+      }
+    } catch (error) {
+      console.error('Error deleting profile:', error)
     }
   }
 
@@ -170,10 +187,12 @@ const TableSection: React.FC = () => {
               <th className='text-xl text-left whitespace-nowrap px-6 py-3 bg-black text-white'>
                 STATUS
               </th>
-              <th className='text-xl text-left whitespace-nowrap px-6 py-3 bg-black text-white'>
+              <th
+                colSpan={3}
+                className='text-xl text-left whitespace-nowrap px-6 py-3 bg-black text-white'
+              >
                 ACTIONS
               </th>
-              <th className='text-xl text-left whitespace-nowrap px-6 py-3 bg-black text-white' />
             </tr>
           </thead>
           <tbody>
@@ -226,7 +245,7 @@ const TableSection: React.FC = () => {
                   {profile.active ? (
                     <button
                       onClick={() => handleDeactivateProfile(profile)}
-                      className='px-4 py-1 bg-red-500 text-white rounded inline-block'
+                      className='px-4 py-1 bg-yellow-500 text-white rounded inline-block'
                     >
                       Deactivate
                     </button>
@@ -238,6 +257,14 @@ const TableSection: React.FC = () => {
                       Activate
                     </button>
                   )}
+                </td>
+                <td className='pr-6 py-4 text-sm lg:text-base whitespace-nowrap'>
+                  <button
+                    onClick={() => handleDeleteProfile(profile.id)}
+                    className='px-4 py-1 bg-red-500 text-white rounded inline-block'
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
