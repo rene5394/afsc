@@ -49,7 +49,7 @@ model Tag {
 
 model ProfileTag {
   id        Int       @id @default(autoincrement())
-  profile   Profile   @relation(fields: [profileId], references: [id])
+  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int       @map("profile_id")
   tag       Tag       @relation(fields: [tagId], references: [id])
   tagId     Int       @map("tag_id")
@@ -73,7 +73,7 @@ model ProfileAsset {
   id        Int       @id @default(autoincrement())
   url       String
   profileId Int       @map("profile_id")
-  profile   Profile   @relation(fields: [profileId], references: [id])
+  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   typeId    Int       @map("type_id")
   type      AssetType @relation(fields: [typeId], references: [id])
   createdAt DateTime  @default(now()) @map("created_at")
@@ -88,7 +88,7 @@ model ProfileRoute {
   latitude    String
   longitude   String
   orderNumber Int       @map("order_number")
-  profile     Profile   @relation(fields: [profileId], references: [id])
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId   Int       @map("profile_id")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime? @updatedAt @map("updated_at")
@@ -101,7 +101,7 @@ model ProfileLink {
   url       String
   title     String
   profileId Int       @map("profile_id")
-  profile   Profile   @relation(fields: [profileId], references: [id])
+  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
