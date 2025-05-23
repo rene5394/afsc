@@ -7,6 +7,7 @@ import {
   ApiResponseWithMeta,
   ApiMetaResponse,
 } from '@/shared/types/ApiResponse'
+import { ProfileStatus } from '@/modules/profile/domain/ProfileStatus'
 
 const apiDomainV1 = process.env.NEXT_PUBLIC_API_V1_URL
 
@@ -64,12 +65,13 @@ export class ProfileRepositoryClient implements ProfileService {
   }
 
   async fetchProfiles(
-    page: number = 1
+    page: number = 1,
+    status: ProfileStatus = ProfileStatus.ACTIVE
   ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }> {
     try {
       const response = await axios.get<
         ApiResponseWithMeta<ProfileResponseDTO[]>
-      >(`${apiDomainV1}/profiles?page=${page}`)
+      >(`${apiDomainV1}/profiles?page=${page}&status=${status}`)
 
       return { data: response.data.data, meta: response.data.meta }
     } catch (error) {

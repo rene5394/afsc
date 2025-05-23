@@ -1,6 +1,7 @@
 import { Profile } from '@/modules/profile/domain/Profile'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 import { ApiMetaResponse } from '@/shared/types/ApiResponse'
+import { ProfileStatus } from '@/modules/profile/domain/ProfileStatus'
 
 export interface ProfileService {
   createProfile(profileData: Partial<Profile>): Promise<ProfileResponseDTO>
@@ -12,7 +13,8 @@ export interface ProfileService {
   patchProfile(profileData: Partial<Profile>): Promise<Profile | null>
 
   fetchProfiles(
-    page: number
+    page: number,
+    status: ProfileStatus
   ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }>
 
   deleteProfile(id: number): Promise<ProfileResponseDTO | null>

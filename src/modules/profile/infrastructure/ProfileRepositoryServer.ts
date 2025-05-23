@@ -3,6 +3,7 @@ import { Profile } from '@/modules/profile/domain/Profile'
 import { ProfileService } from '@/modules/profile/application/ProfileService'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 import { ApiMetaResponse } from '@/shared/types/ApiResponse'
+import { ProfileStatus } from '@/modules/profile/domain/ProfileStatus'
 
 const prisma = new PrismaClient()
 const ITEMS_PER_PAGE = 10
@@ -229,7 +230,8 @@ export class ProfileRepositoryServer implements ProfileService {
   }
 
   async fetchProfiles(
-    page: number = 1
+    page: number = 1,
+    status: ProfileStatus = ProfileStatus.ACTIVE
   ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }> {
     try {
       const skip = (page - 1) * ITEMS_PER_PAGE
