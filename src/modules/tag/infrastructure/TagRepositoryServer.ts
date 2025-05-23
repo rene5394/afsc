@@ -8,7 +8,15 @@ const prisma = new PrismaClient()
 export class TagRepositoryServer implements TagService {
   async fetchTags(status: TagStatus = TagStatus.ACTIVE): Promise<Tag[]> {
     try {
-      const tags = await prisma.tag.findMany()
+      const whereClause =
+        status === TagStatus.ALL
+          ? {}
+          : status === TagStatus.INACTIVE
+          ? { active: false }
+          : { active: true }
+      const tags = await prisma.tag.findMany({
+        where: whereClause,
+      })
 
       return tags
     } catch (error) {
