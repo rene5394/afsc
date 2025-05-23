@@ -2,8 +2,9 @@ import { ReadProfilesUseCase } from '@/modules/profile/application/ReadProfileUs
 import { FetchTagsUseCase } from '@/modules/tag/application/FetchTagsUseCase'
 import { ProfileRepositoryServer } from '@/modules/profile/infrastructure/ProfileRepositoryServer'
 import { TagRepositoryServer } from '@/modules/tag/infrastructure/TagRepositoryServer'
-import NewProfileSection from '@/app/components/Admin/Profiles/NewProfileSection'
 import { Tag } from '@/modules/tag/domain/Tag'
+import { TagStatus } from '@/modules/tag/domain/TagStatus'
+import NewProfileSection from '@/app/components/Admin/Profiles/NewProfileSection'
 
 export default async function CreateProfilePage() {
   const readProfilesUseCase = new ReadProfilesUseCase(
@@ -12,7 +13,7 @@ export default async function CreateProfilePage() {
   const readTagsUseCase = new FetchTagsUseCase(new TagRepositoryServer())
 
   try {
-    const tags: Tag[] = await readTagsUseCase.execute()
+    const tags: Tag[] = await readTagsUseCase.execute(TagStatus.ACTIVE)
 
     if (!tags) {
       throw new Error('Tags not found')

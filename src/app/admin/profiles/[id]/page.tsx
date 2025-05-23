@@ -5,6 +5,7 @@ import { TagRepositoryServer } from '@/modules/tag/infrastructure/TagRepositoryS
 import { Profile } from '@/modules/profile/domain/Profile'
 import { Tag } from '@/modules/tag/domain/Tag'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
+import { TagStatus } from '@/modules/tag/domain/TagStatus'
 import ProfileSection from '@/app/components/Admin/Profiles/ProfileSection'
 
 type ProfilePageParams = {
@@ -26,7 +27,7 @@ export default async function ProfilePage({
   try {
     const ProfileResponseDTO: ProfileResponseDTO | null =
       await readProfilesUseCase.execute(id)
-    const tags: Tag[] = await readTagsUseCase.execute()
+    const tags: Tag[] = await readTagsUseCase.execute(TagStatus.ALL)
 
     if (!ProfileResponseDTO) {
       throw new Error('Profile not found')

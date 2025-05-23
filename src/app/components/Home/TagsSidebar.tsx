@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { FetchTagsUseCase } from '@/modules/tag/application/FetchTagsUseCase'
 import { TagRepositoryClient } from '@/modules/tag/infrastructure/TagRepositoryClient'
 import { Tag } from '@/modules/tag/domain/Tag'
+import { TagStatus } from '@/modules/tag/domain/TagStatus'
 
 interface TagsSidebarProps {
   selectedTagId?: number
@@ -21,7 +22,7 @@ const TagsSidebar: React.FC<TagsSidebarProps> = ({
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const fetchedTags = await fetchTagsUseCase.execute()
+        const fetchedTags = await fetchTagsUseCase.execute(TagStatus.ACTIVE)
         setTags(fetchedTags)
       } catch (error) {
         console.error('Error fetching tags:', error)
