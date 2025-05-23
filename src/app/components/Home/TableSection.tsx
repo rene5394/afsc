@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { FetchProfilesUseCase } from '@/modules/profile/application/FetchProfilesUseCase'
 import { ProfileRepositoryClient } from '@/modules/profile/infrastructure/ProfileRepositoryClient'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
+import { ProfileStatus } from '@/modules/profile/domain/ProfileStatus'
 
 const TableSection: React.FC = () => {
   const [profiles, setProfiles] = useState<ProfileResponseDTO[]>([])
@@ -19,7 +20,10 @@ const TableSection: React.FC = () => {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const { data, meta } = await fetchProfilesUseCase.execute(currentPage)
+        const { data, meta } = await fetchProfilesUseCase.execute(
+          currentPage,
+          ProfileStatus.ACTIVE
+        )
         setProfiles(data)
         setTotalPages(meta.totalPages)
       } catch (error) {

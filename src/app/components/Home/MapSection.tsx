@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import { FetchProfilesUseCase } from '@/modules/profile/application/FetchProfilesUseCase'
 import { ProfileRepositoryClient } from '@/modules/profile/infrastructure/ProfileRepositoryClient'
 import { Profile } from '@/modules/profile/domain/Profile'
+import { ProfileStatus } from '@/modules/profile/domain/ProfileStatus'
 
 const Map = dynamic(() => import('./Map'), { ssr: false })
 
@@ -21,7 +22,10 @@ const MapSection: React.FC = () => {
 
   const fetchProfiles = async (page: number): Promise<boolean> => {
     try {
-      const { data, meta } = await fetchProfilesUseCase.execute(page)
+      const { data, meta } = await fetchProfilesUseCase.execute(
+        page,
+        ProfileStatus.ACTIVE
+      )
       const profilesData = data.map((item) => ({
         id: item.id,
         name: item.name,
