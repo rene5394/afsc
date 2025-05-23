@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { PrismaClient } from '@prisma/client'
+import { verifyJWT } from '@/app/utils/jwt'
+import { JWT_SECRET } from '@/app/utils/constants'
 import { CreateTagSchema } from '@/modules/tag/application/dtos/CreateTagDTO'
+
+const prisma = new PrismaClient()
 
 export async function POST(req: NextRequest) {
   try {
-    const prisma = new PrismaClient()
     const body = await req.json()
     const parsed = CreateTagSchema.safeParse(body)
 
@@ -30,10 +34,43 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const prisma = new PrismaClient()
-    const tags = await prisma.tag.findMany()
+    const params = req.nextUrl.searchParams
+
+    const statusParam = params.get('status')
+    const requestedStatus =
+      statusParam === 'inactive'
+        ? 'inactive'
+        : statusParam === 'all'
+        ? 'all'
+        : 'active'
+
+    const cookieStore = cookies()
+    const token = cookieStore.get('afsc_token')?.value
+    let hasValidJWT = false
+
+    if (token && JWT_SECRET) {
+      try {
+        const payload = await verifyJWT(token, JWT_SECRET)
+        if (payload) {
+          hasValidJWT = true
+        }
+      } catch (err) {
+        hasValidJWT = false
+      }
+    }
+
+    const whereClause =
+      requestedStatus === 'all' && hasValidJWT
+        ? {}
+        : requestedStatus === 'inactive' && hasValidJWT
+        ? { active: false }
+        : { active: true }
+
+    const tags = await prisma.tag.findMany({
+      where: whereClause,
+    })
 
     return NextResponse.json({ status: 200, data: tags }, { status: 200 })
   } catch (error) {
