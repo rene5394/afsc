@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { Tag } from '@/modules/tag/domain/Tag'
 import { TagService } from '@/modules/tag/application/TagService'
+import { TagStatus } from '@/modules/tag/domain/TagStatus'
 
 const prisma = new PrismaClient()
 
 export class TagRepositoryServer implements TagService {
-  async fetchTags(): Promise<Tag[]> {
+  async fetchTags(status: TagStatus = TagStatus.ACTIVE): Promise<Tag[]> {
     try {
       const tags = await prisma.tag.findMany()
 
