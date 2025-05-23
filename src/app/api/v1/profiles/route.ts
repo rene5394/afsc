@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { PrismaClient } from '@prisma/client'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
+import { verifyJWT } from '@/app/utils/jwt'
+import { JWT_SECRET } from '@/app/utils/constants'
 import { CreateProfileSchema } from '@/modules/profile/application/dtos/CreateProfileDTO'
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 
@@ -246,9 +249,40 @@ export async function GET(req: NextRequest) {
     const page = parseInt(params.get('page') ?? '1')
     const skip = (page - 1) * ITEMS_PER_PAGE
 
-    const totalProfiles = await prisma.profile.count()
+    const statusParam = params.get('status')
+    const requestedStatus =
+      statusParam === 'inactive'
+        ? 'inactive'
+        : statusParam === 'all'
+        ? 'all'
+        : 'active'
+
+    const cookieStore = cookies()
+    const token = cookieStore.get('afsc_token')?.value
+    let hasValidJWT = false
+
+    if (token && JWT_SECRET) {
+      try {
+        const payload = await verifyJWT(token, JWT_SECRET)
+        if (payload) {
+          hasValidJWT = true
+        }
+      } catch (err) {
+        hasValidJWT = false
+      }
+    }
+
+    const whereClause =
+      requestedStatus === 'all' && hasValidJWT
+        ? {}
+        : requestedStatus === 'inactive' && hasValidJWT
+        ? { active: false }
+        : { active: true }
+
+    const totalProfiles = await prisma.profile.count({ where: whereClause })
 
     const profiles = await prisma.profile.findMany({
+      where: whereClause,
       skip: skip,
       take: ITEMS_PER_PAGE,
       include: {
