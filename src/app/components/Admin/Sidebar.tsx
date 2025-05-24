@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
               <Link
                 href='/admin/users'
                 className={`block px-2 py-1 rounded hover:text-red-600 ${
-                  isActive('/admin/profiles')
+                  isActive('/admin/users')
                     ? 'font-semibold text-red-700'
                     : 'text-gray-700'
                 }`}
