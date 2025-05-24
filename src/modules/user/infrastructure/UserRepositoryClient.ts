@@ -4,11 +4,12 @@ import { UserService } from '@/modules/user/application/UserService'
 import { ApiResponse, ApiResponseWithMeta } from '@/shared/types/ApiResponse'
 import { ApiMetaResponse } from '@/shared/types/ApiResponse'
 import { UserStatus } from '@/modules/user/domain/UserStatus'
+import { CreateUserDTO } from '../application/dtos/CreateUserDTO'
 
 const apiDomainV1 = process.env.NEXT_PUBLIC_API_V1_URL
 
 export class UserRepositoryClient implements UserService {
-  async createUser(userData: Partial<User>): Promise<User> {
+  async createUser(userData: CreateUserDTO): Promise<User> {
     try {
       const response = await axios.post<ApiResponse<User>>(
         `${apiDomainV1}/users`,
