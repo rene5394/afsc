@@ -47,8 +47,16 @@ export class ProfileRepositoryServer implements ProfileService {
               tag: true,
             },
           },
-          ProfileAsset: true,
-          ProfileRoute: true,
+          ProfileAsset: {
+            orderBy: {
+              createdAt: 'asc',
+            },
+          },
+          ProfileRoute: {
+            orderBy: {
+              orderNumber: 'asc',
+            },
+          },
           ProfileLink: true,
         },
       })
@@ -241,14 +249,23 @@ export class ProfileRepositoryServer implements ProfileService {
       const profiles = await prisma.profile.findMany({
         skip: skip,
         take: ITEMS_PER_PAGE,
+        orderBy: { createdAt: 'asc' },
         include: {
           ProfileTag: {
             include: {
               tag: true,
             },
           },
-          ProfileAsset: true,
-          ProfileRoute: true,
+          ProfileAsset: {
+            orderBy: {
+              createdAt: 'asc',
+            },
+          },
+          ProfileRoute: {
+            orderBy: {
+              orderNumber: 'asc',
+            },
+          },
           ProfileLink: true,
         },
       })

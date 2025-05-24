@@ -70,6 +70,7 @@ export async function GET(req: NextRequest) {
 
     const tags = await prisma.tag.findMany({
       where: whereClause,
+      orderBy: { createdAt: 'asc' },
     })
 
     return NextResponse.json({ status: 200, data: tags }, { status: 200 })

@@ -59,7 +59,7 @@ export class UserRepositoryServer implements UserService {
         where: whereClause,
         skip,
         take: ITEMS_PER_PAGE,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: 'asc' },
       })
 
       const transformedUsers = users.map((user) => ({

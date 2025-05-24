@@ -86,8 +86,16 @@ export async function GET(req: NextRequest) {
             tag: true,
           },
         },
-        ProfileAsset: true,
-        ProfileRoute: true,
+        ProfileAsset: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+        ProfileRoute: {
+          orderBy: {
+            orderNumber: 'asc',
+          },
+        },
         ProfileLink: true,
       },
     })

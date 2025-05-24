@@ -16,6 +16,7 @@ export class TagRepositoryServer implements TagService {
           : { active: true }
       const tags = await prisma.tag.findMany({
         where: whereClause,
+        orderBy: { createdAt: 'asc' },
       })
 
       return tags

@@ -285,14 +285,23 @@ export async function GET(req: NextRequest) {
       where: whereClause,
       skip: skip,
       take: ITEMS_PER_PAGE,
+      orderBy: { createdAt: 'asc' },
       include: {
         ProfileTag: {
           include: {
             tag: true,
           },
         },
-        ProfileAsset: true,
-        ProfileRoute: true,
+        ProfileAsset: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+        ProfileRoute: {
+          orderBy: {
+            orderNumber: 'asc',
+          },
+        },
         ProfileLink: true,
       },
     })
