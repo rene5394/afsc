@@ -75,6 +75,18 @@ const Sidebar: React.FC = () => {
                 Profiles
               </Link>
             </li>
+            <li>
+              <Link
+                href='/admin/users'
+                className={`block px-2 py-1 rounded hover:text-red-600 ${
+                  isActive('/admin/profiles')
+                    ? 'font-semibold text-red-700'
+                    : 'text-gray-700'
+                }`}
+              >
+                Users
+              </Link>
+            </li>
           </ul>
         </nav>
 
