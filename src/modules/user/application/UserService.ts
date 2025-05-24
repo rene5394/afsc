@@ -1,11 +1,10 @@
 import { User } from '@/modules/user/domain/User'
 import { ApiMetaResponse } from '@/shared/types/ApiResponse'
 import { UserStatus } from '@/modules/user/domain/UserStatus'
+import { CreateUserDTO } from '@/modules/user/application/dtos/CreateUserDTO'
 
 export interface UserService {
-  createUser(userData: Partial<User>): Promise<User>
-
-  readUser(id: number): Promise<User | null>
+  createUser(userData: CreateUserDTO): Promise<User>
 
   updateUser(userData: Partial<User>): Promise<User | null>
 
