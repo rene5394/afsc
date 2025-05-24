@@ -6,6 +6,8 @@ import { UserStatus } from '@/modules/user/domain/UserStatus'
 import { FetchUsersUseCase } from '@/modules/user/application/FetchUsersUseCase'
 import { UserRepositoryClient } from '@/modules/user/infrastructure/UserRepositoryClient'
 import { UpdateUserUseCase } from '@/modules/user/application/UpdateUserUseCase'
+import CreateUserModal from '@/app/components/Admin/Users/CreateUserModal'
+import UpdateUserModal from '@/app/components/Admin/Users/UpdateUserModal'
 
 const TableSection: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
@@ -220,6 +222,47 @@ const TableSection: React.FC = () => {
           Next
         </button>
       </div>
+      {editingUser && (
+        <UpdateUserModal
+          isOpen={true}
+          onClose={() => setEditingUser(null)}
+          user={{
+            id: editingUser.id,
+            name: editingUser.name,
+            email: editingUser.email,
+          }}
+          onUpdate={(updated) =>
+            setUsers((prev) =>
+              prev.map((user) =>
+                user.id === updated.id
+                  ? {
+                      ...user,
+                      name: updated.name,
+                      email: updated.email,
+                      updatedAt: new Date(),
+                    }
+                  : user
+              )
+            )
+          }
+        />
+      )}
+      {creatingUser && (
+        <CreateUserModal
+          isOpen={true}
+          onClose={() => setCreatingUser(false)}
+          onCreate={(newUser) =>
+            setUsers((prev) => [
+              ...prev,
+              {
+                ...newUser,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              },
+            ])
+          }
+        />
+      )}
     </div>
   )
 }
