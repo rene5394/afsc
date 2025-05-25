@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 export async function PUT(req: NextRequest) {
   try {
     const id = Number(req.nextUrl.pathname.split('/')[4])
-    const tag = await prisma.profile.findUnique({ where: { id } })
+    const tag = await prisma.tag.findUnique({ where: { id } })
 
     if (!tag) {
       return NextResponse.json(
