@@ -140,6 +140,14 @@ aside button {
 }
 
 /* ======================
+   Story Styles
+====================== */
+#story-text a {
+  color: #06c !important;
+  font-weight: 900;
+}
+
+/* ======================
    Map Styles
 ====================== */
 .custom-black-marker {
