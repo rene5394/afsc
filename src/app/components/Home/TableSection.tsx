@@ -105,9 +105,11 @@ const TableSection: React.FC = () => {
               <th className='text-xl text-left whitespace-nowrap pr-4'>
                 ORIGIN
               </th>
-              <th className='text-xl text-left whitespace-nowrap pr-4'>AGE</th>
               <th className='text-xl text-left whitespace-nowrap'>
                 MIGRATION TYPE
+              </th>
+              <th className='text-xl text-left whitespace-nowrap pr-4'>
+                AUTHOR
               </th>
             </tr>
             <tr>
@@ -125,15 +127,15 @@ const TableSection: React.FC = () => {
                 <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
                   {profile.routes[0]?.location || 'Unknown'}
                 </td>
-                <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
-                  N/A
-                </td>
                 <td className='pt-6 text-sm lg:text-base whitespace-nowrap'>
                   {profile.tags.map((tag, tagIndex) => (
                     <span key={tagIndex} className='border px-3 py-1 ml-3'>
                       {tag.name}
                     </span>
                   ))}
+                </td>
+                <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
+                  {profile.author}
                 </td>
               </tr>
             ))}
