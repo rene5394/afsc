@@ -16,6 +16,10 @@ const PhotoSection: React.FC<PhotoSectionProps> = ({ profile }) => {
         </div>
         <div className='flex-auto ml-6'>
           <h1 className='text-4xl md:text-5xl'>{profile.name}</h1>
+          <h3 className='text-l acta mb-3'>
+            <span className='acta-bold'>Author: </span>
+            {profile.author ? profile.author : 'Unknown'}
+          </h3>
           <div className='md:flex'>
             {profile.tags.map((tag, index) => (
               <button
