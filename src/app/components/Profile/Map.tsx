@@ -38,11 +38,15 @@ const Map: React.FC<MapProps> = ({ profileRoutes }) => {
     parseFloat(route.longitude),
   ])
 
+  const baseHeight = 400
+  const extraHeight = Math.max(0, profileRoutes.length - 9) * 20
+  const totalHeight = baseHeight + extraHeight
+
   return (
     <MapContainer
       center={[25.5, -35.5]}
       zoom={2}
-      className='h-[250px] md:h-[400px] w-full'
+      className={`h-[250px] md:h-[${totalHeight}px] w-full`}
     >
       <TileLayer
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'

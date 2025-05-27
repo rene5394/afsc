@@ -174,3 +174,23 @@ footer a span {
   letter-spacing: 0.1px;
   font-size: 16px;
 }
+
+#story-text::-webkit-scrollbar {
+  width: 13px;
+  height: 13px;
+}
+
+#story-text::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: #f4f4f4;
+}
+
+#story-text::-webkit-scrollbar-thumb {
+  background: #828282;
+  border-radius: 100vh;
+  border: 3px solid #f6f7ed;
+}
+
+#story-text::-webkit-scrollbar-thumb:hover {
+  background: #ef4444;
+}
