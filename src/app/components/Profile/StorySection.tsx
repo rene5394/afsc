@@ -24,14 +24,14 @@ const StorySection: React.FC<StorySectionProps> = ({ profile }) => {
             <hr className='border-t border-gray-300 mt-2 mb-4' />
             <div
               id='story-text'
-              className={`overflow-y-auto ${
-                profile.story?.length > 0 ? 'h-[250px]' : 'h-0'
+              className={`overflow-y-auto leading-[1.6] ${
+                profile.story?.length > 0 ? 'h-[267px]' : 'h-0'
               }`}
               dangerouslySetInnerHTML={{ __html: profile.story }}
             />
           </div>
           {photoAssets.length > 0 && (
-            <div className='md:w-1/2 mt-6'>
+            <div className='md:w-1/2 mt-10'>
               <Swiper
                 spaceBetween={10}
                 slidesPerView={1}

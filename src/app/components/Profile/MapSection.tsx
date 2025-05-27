@@ -18,7 +18,7 @@ const MapSection: React.FC<MapSectionProps> = ({ profile }) => {
         <div className='md:w-1/2 md:pl-8'>
           {profile.routes.length > 0 && (
             <>
-              <h2 className='text-3xl'>THE ROUTE</h2>
+              <h2 className='text-3xl mt-[-5px]'>THE ROUTE</h2>
               <hr className='border-t border-gray-300 mt-2 mb-4' />
               <div className='flex items-start my-2'>
                 <div className='flex-none w-[105px]'>
