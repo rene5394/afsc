@@ -10,12 +10,21 @@ const PhotoSection: React.FC<PhotoSectionProps> = ({ profile }) => {
 
   return (
     <div className='container xl:max-w-[1024px] lg:max-w-[900px] md:max-w-[600px] max-w-[300px] mx-auto pt-1 pb-2'>
-      <div className='flex items-start'>
-        <div className='flex-none w-[150px]'>
+      <div className='md:flex items-start'>
+        <div className='flex-none md:w-[150px] w-full'>
+          <h1
+            aria-hidden='true'
+            role='presentation'
+            className='text-4xl md:text-5xl md:hidden'
+          >
+            {profile.name}
+          </h1>
           <img src={photoSrc} alt='placeholder' />
         </div>
-        <div className='flex-auto ml-6'>
-          <h1 className='text-4xl md:text-5xl'>{profile.name}</h1>
+        <div className='flex-auto md:ml-6 md:mt-0 mt-4'>
+          <h1 className='text-4xl md:text-5xl hidden md:block'>
+            {profile.name}
+          </h1>
           <h3 className='text-l acta mb-3'>
             <span className='acta-bold'>Author: </span>
             {profile.author ? profile.author : 'Unknown'}

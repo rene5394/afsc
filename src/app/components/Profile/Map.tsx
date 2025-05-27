@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import L, { LatLngTuple } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -33,6 +33,8 @@ const blackIcon = L.divIcon({
 })
 
 const Map: React.FC<MapProps> = ({ profileRoutes }) => {
+  const [zoom, setZoom] = useState(2)
+  const [center, setCenter] = useState<LatLngTuple>([25.5, -65])
   const polylinePositions: LatLngTuple[] = profileRoutes.map((route) => [
     parseFloat(route.latitude),
     parseFloat(route.longitude),
@@ -42,10 +44,26 @@ const Map: React.FC<MapProps> = ({ profileRoutes }) => {
   const extraHeight = Math.max(0, profileRoutes.length - 9) * 20
   const totalHeight = baseHeight + extraHeight
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 768px)')
+
+    const handleResize = () => {
+      setZoom(mediaQuery.matches ? 4 : 2)
+      setCenter(mediaQuery.matches ? [25.5, -35.5] : [25.5, -65])
+    }
+
+    handleResize()
+    mediaQuery.addEventListener('change', handleResize)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleResize)
+    }
+  }, [])
+
   return (
     <MapContainer
-      center={[25.5, -35.5]}
-      zoom={2}
+      center={center}
+      zoom={zoom}
       className={`h-[250px] md:h-[${totalHeight}px] w-full`}
     >
       <TileLayer

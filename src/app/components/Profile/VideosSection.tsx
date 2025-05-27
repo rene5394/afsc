@@ -42,8 +42,7 @@ const VideoSection: React.FC<VideoSectionProps> = ({ profileAssets }) => {
             <div className='flex justify-center'>
               {videoAsset ? (
                 <iframe
-                  width='560'
-                  height='315'
+                  className='h-[200px] w-full md:h-[315px] md:w-[560px]'
                   src={videoAsset.url}
                   title='Story'
                   frameBorder='0'
