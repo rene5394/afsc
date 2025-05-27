@@ -25,16 +25,20 @@ const Header: React.FC<HeaderProps> = ({ showBottomBorder = true }) => {
     >
       <div className='flex'>
         <div className='flex-none w-[210px] px-[15px] py-1 lg:px-[30px] lg:py-4'>
-          <img
-            className='hidden lg:block'
-            src='https://afsc.org/sites/default/files/2022-08/logo.svg'
-            alt='AFSC Logo'
-          />
-          <img
-            className='block lg:hidden h-[55px] my-[1px]'
-            src='https://afsc.org/sites/default/files/2022-08/logo-compressed.svg'
-            alt='AFSC Logo Mobile'
-          />
+          <a href='https://afsc.org'>
+            <img
+              className='hidden lg:block'
+              src='https://afsc.org/sites/default/files/2022-08/logo.svg'
+              alt='AFSC Logo'
+            />
+          </a>
+          <a href='https://afsc.org'>
+            <img
+              className='block lg:hidden h-[55px] my-[1px]'
+              src='https://afsc.org/sites/default/files/2022-08/logo-compressed.svg'
+              alt='AFSC Logo Mobile'
+            />
+          </a>
         </div>
         <div className='hidden lg:block lg:flex-auto border-l-gray-300 border-l-[1px]'>
           <div className='flex pl-[30px] pt-[14px] pb-[14px] border-b-gray-300 border-b-[1px]'>
