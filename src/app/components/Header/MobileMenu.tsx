@@ -115,7 +115,7 @@ const MobileMenu: React.FC = () => {
                 target={item.target}
                 className='font-medium text-gray-800 hover:text-red-600 py-4'
               >
-                <span className='text-[40px]'>{item.label}</span>
+                <span className='md:text-[40px] text-xl'>{item.label}</span>
               </a>
               {item.children && (
                 <button
