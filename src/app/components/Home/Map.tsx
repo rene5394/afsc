@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L, { LatLngTuple } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { Profile } from '@/modules/profile/domain/Profile'
+import UpdateMapZoom from '@/app/components/Home/UpdateMapZoom'
 
 interface MapProps {
   profiles: Profile[]
@@ -26,11 +27,29 @@ const blackIcon = L.divIcon({
 })
 
 const Map: React.FC<MapProps> = ({ profiles, selectedTagId }) => {
+  const [zoom, setZoom] = useState(1)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 768px)')
+
+    const handleResize = () => {
+      setZoom(mediaQuery.matches ? 2 : 1)
+      console.log('Zoom level set to:', mediaQuery.matches ? 2 : 1)
+    }
+
+    handleResize()
+    mediaQuery.addEventListener('change', handleResize)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleResize)
+    }
+  }, [])
+
   return (
     <MapContainer
       center={[25.5, -25.5]}
-      zoom={2}
-      className='h-[250px] md:h-[400px] w-full'
+      zoom={zoom}
+      className='h-[250px] md:h-[425px] w-full'
     >
       <TileLayer
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -59,6 +78,7 @@ const Map: React.FC<MapProps> = ({ profiles, selectedTagId }) => {
           </Marker>
         )
       })}
+      <UpdateMapZoom zoom={zoom} />
     </MapContainer>
   )
 }
