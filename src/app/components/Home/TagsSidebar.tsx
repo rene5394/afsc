@@ -33,7 +33,10 @@ const TagsSidebar: React.FC<TagsSidebarProps> = ({
   }, [])
 
   return (
-    <div className='grid grid-cols-2 md:grid-cols-1 gap-2 mb-3 md:w-[165px] md:mr-8 md:mb-0'>
+    <div
+      id='tag-sidebar'
+      className='grid grid-cols-2 md:grid-cols-1 gap-2 md:overflow-y-auto mb-3 md:w-[185px] md:h-[425px] md:pr-1 md:mr-4 md:mb-0'
+    >
       {tags.map((tag) => (
         <button
           key={tag.id}
