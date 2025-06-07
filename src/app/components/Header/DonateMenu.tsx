@@ -11,7 +11,7 @@ const DonateMenu: React.FC = () => {
           DONATE
         </a>
         <div className='w-[320px] bg-white text-black border-gray-300 border-[1px] invisible absolute left-[-220px] z-50 py-5 px-4 group-hover:visible'>
-          <ul>
+          <ul id='donate-submenu'>
             <li className='group/item'>
               <a
                 className='flex menu-hover px-8 py-1'
@@ -27,7 +27,7 @@ const DonateMenu: React.FC = () => {
               >
                 <span className='group-hover/item:underline'>GIVE MONTHLY</span>
               </a>
-            </li> 
+            </li>
             <li className='group/item'>
               <a
                 className='flex menu-hover px-8 py-1'

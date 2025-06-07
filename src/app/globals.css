@@ -93,6 +93,10 @@ header a span {
   font-size: 18px;
 }
 
+#donate-submenu a span {
+  color: rgb(var(--primary-text-rgb));
+}
+
 .subitem-submenu-icon {
   padding-right: 22px;
   background: no-repeat
