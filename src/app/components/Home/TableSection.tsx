@@ -127,14 +127,14 @@ const TableSection: React.FC = () => {
                 <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
                   {profile.routes[0]?.location || 'Unknown'}
                 </td>
-                <td className='pt-6 text-sm lg:text-base whitespace-nowrap'>
+                <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
                   {profile.tags.map((tag, tagIndex) => (
                     <span key={tagIndex} className='border px-3 py-1 ml-3'>
                       {tag.name}
                     </span>
                   ))}
                 </td>
-                <td className='pt-6 text-sm lg:text-base whitespace-nowrap pr-4'>
+                <td className='pt-6 text-sm lg:text-base whitespace-nowrap'>
                   {profile.author}
                 </td>
               </tr>
