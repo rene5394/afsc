@@ -8,7 +8,7 @@ import { TagStatus } from '@/modules/tag/domain/TagStatus'
 
 interface TagsSidebarProps {
   selectedTagId?: number
-  handleTagClick: (tagId: number) => void
+  handleTagClick: (tagId: number | undefined) => void
 }
 
 const TagsSidebar: React.FC<TagsSidebarProps> = ({
@@ -37,6 +37,15 @@ const TagsSidebar: React.FC<TagsSidebarProps> = ({
       id='tag-sidebar'
       className='grid grid-cols-2 md:grid-cols-1 gap-2 md:overflow-y-auto mb-3 md:w-[185px] md:h-[425px] md:pr-1 md:mr-4 md:mb-0'
     >
+      <button
+        key={-1}
+        className={`w-full text-xs md:text-sm text-white py-2 mb-2 ${
+          selectedTagId === undefined ? 'bg-red' : 'bg-black'
+        }`}
+        onClick={() => handleTagClick(undefined)}
+      >
+        All
+      </button>
       {tags.map((tag) => (
         <button
           key={tag.id}

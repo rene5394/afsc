@@ -10,11 +10,18 @@ import { ProfileStatus } from '@/modules/profile/domain/ProfileStatus'
 
 const Map = dynamic(() => import('./Map'), { ssr: false })
 
-const MapSection: React.FC = () => {
+type MapSectionProps = {
+  selectedTagId?: number
+  setSelectedTagId: (tagId: number | undefined) => void
+}
+
+const MapSection: React.FC<MapSectionProps> = ({
+  selectedTagId,
+  setSelectedTagId,
+}) => {
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [shouldFetch, setShouldFetch] = useState(true)
-  const [selectedTagId, setSelectedTagId] = useState<number>()
 
   const fetchProfilesUseCase = new FetchProfilesUseCase(
     new ProfileRepositoryClient()
@@ -68,7 +75,11 @@ const MapSection: React.FC = () => {
     loadProfiles()
   }, [currentPage, shouldFetch])
 
-  const handleTagClick = (tagId: number) => {
+  const handleTagClick = (tagId: number | undefined) => {
+    console.log('Handle Tag Click:', tagId)
+    if (tagId === undefined) {
+      console.log('All tags selected, clearing selection')
+    }
     setSelectedTagId(tagId)
   }
 

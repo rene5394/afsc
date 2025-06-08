@@ -34,7 +34,6 @@ const Map: React.FC<MapProps> = ({ profiles, selectedTagId }) => {
 
     const handleResize = () => {
       setZoom(mediaQuery.matches ? 2 : 1)
-      console.log('Zoom level set to:', mediaQuery.matches ? 2 : 1)
     }
 
     handleResize()

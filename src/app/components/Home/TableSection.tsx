@@ -7,7 +7,11 @@ import { ProfileRepositoryClient } from '@/modules/profile/infrastructure/Profil
 import { ProfileResponseDTO } from '@/modules/profile/application/dtos/ProfileResponseDTO'
 import { ProfileStatus } from '@/modules/profile/domain/ProfileStatus'
 
-const TableSection: React.FC = () => {
+type TableSectionProps = {
+  selectedTagId?: number
+}
+
+const TableSection: React.FC<TableSectionProps> = ({ selectedTagId }) => {
   const [profiles, setProfiles] = useState<ProfileResponseDTO[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
@@ -22,7 +26,8 @@ const TableSection: React.FC = () => {
       try {
         const { data, meta } = await fetchProfilesUseCase.execute(
           currentPage,
-          ProfileStatus.ACTIVE
+          ProfileStatus.ACTIVE,
+          selectedTagId
         )
         setProfiles(data)
         setTotalPages(meta.totalPages)
@@ -32,7 +37,7 @@ const TableSection: React.FC = () => {
     }
 
     fetchProfiles()
-  }, [currentPage])
+  }, [currentPage, selectedTagId])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)

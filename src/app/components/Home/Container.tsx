@@ -1,12 +1,19 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import MapSection from '@/app/components/Home/MapSection'
 import TableSection from '@/app/components/Home/TableSection'
 
 const Container: React.FC = () => {
+  const [selectedTagId, setSelectedTagId] = useState<number | undefined>()
+
   return (
     <>
-      <MapSection />
-      <TableSection />
+      <MapSection
+        selectedTagId={selectedTagId}
+        setSelectedTagId={setSelectedTagId}
+      />
+      <TableSection selectedTagId={selectedTagId} />
     </>
   )
 }
