@@ -66,12 +66,13 @@ export class ProfileRepositoryClient implements ProfileService {
 
   async fetchProfiles(
     page: number = 1,
-    status: ProfileStatus = ProfileStatus.ACTIVE
+    status: ProfileStatus = ProfileStatus.ACTIVE,
+    tagId?: number
   ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }> {
     try {
       const response = await axios.get<
         ApiResponseWithMeta<ProfileResponseDTO[]>
-      >(`${apiDomainV1}/profiles?page=${page}&status=${status}`)
+      >(`${apiDomainV1}/profiles?page=${page}&status=${status}&tagId=${tagId}`)
 
       return { data: response.data.data, meta: response.data.meta }
     } catch (error) {

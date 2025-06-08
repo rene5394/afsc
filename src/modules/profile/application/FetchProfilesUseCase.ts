@@ -8,8 +8,9 @@ export class FetchProfilesUseCase {
 
   async execute(
     page: number,
-    status: ProfileStatus
+    status: ProfileStatus,
+    tagId?: number
   ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }> {
-    return await this.profileService.fetchProfiles(page, status)
+    return await this.profileService.fetchProfiles(page, status, tagId)
   }
 }

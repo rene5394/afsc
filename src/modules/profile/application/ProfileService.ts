@@ -14,7 +14,8 @@ export interface ProfileService {
 
   fetchProfiles(
     page: number,
-    status: ProfileStatus
+    status: ProfileStatus,
+    tagId?: number
   ): Promise<{ data: ProfileResponseDTO[]; meta: ApiMetaResponse }>
 
   deleteProfile(id: number): Promise<ProfileResponseDTO | null>

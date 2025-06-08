@@ -257,6 +257,10 @@ export async function GET(req: NextRequest) {
         ? 'all'
         : 'active'
 
+    const tagParam = params.get('tagId')
+    const requestedTag =
+      tagParam == null || tagParam === 'undefined' ? null : parseInt(tagParam)
+
     const cookieStore = cookies()
     const token = cookieStore.get('afsc_token')?.value
     let hasValidJWT = false
@@ -272,12 +276,21 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const whereClause =
-      requestedStatus === 'all' && hasValidJWT
-        ? {}
-        : requestedStatus === 'inactive' && hasValidJWT
-        ? { active: false }
-        : { active: true }
+    let whereClause: any = {}
+
+    if (requestedStatus === 'inactive' && hasValidJWT) {
+      whereClause.active = false
+    } else if (!(requestedStatus === 'all' && hasValidJWT)) {
+      whereClause.active = true
+    }
+
+    if (requestedTag !== null) {
+      whereClause.ProfileTag = {
+        some: {
+          tagId: requestedTag,
+        },
+      }
+    }
 
     const totalProfiles = await prisma.profile.count({ where: whereClause })
 
