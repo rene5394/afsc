@@ -13,7 +13,6 @@ const Header: React.FC<HeaderProps> = ({ showBottomBorder = true }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const toggleMobileMenu = () => {
-    console.log('JAJAJA', isMobileMenuOpen)
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
