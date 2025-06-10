@@ -144,6 +144,9 @@ export async function POST(req: NextRequest) {
       }) ?? []
     )
 
+    const hasVideo =
+      assets?.some((asset) => asset.type === AssetType.VIDEO) ?? false
+
     const createdProfile = await prisma.$transaction(async (prisma) => {
       const newProfile = await prisma.profile.create({
         data: {
@@ -151,6 +154,7 @@ export async function POST(req: NextRequest) {
           author,
           story,
           photo: photoUrl,
+          hasVideo,
           ProfileTag: {
             create: tagIds.map((tagId) => ({
               tagId,

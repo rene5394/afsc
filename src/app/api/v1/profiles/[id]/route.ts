@@ -276,6 +276,18 @@ export async function PUT(req: NextRequest) {
       typeId: AssetTypeIdMap[asset.type as AssetType],
     }))
 
+    const remainingAssets = currentAssets.filter(
+      (asset) => !assetsToRemove.includes(asset.id)
+    )
+
+    const hasVideo =
+      remainingAssets.some(
+        (asset) => asset.typeId === AssetTypeIdMap[AssetType.VIDEO]
+      ) ||
+      validAssets.some(
+        (asset) => asset.typeId === AssetTypeIdMap[AssetType.VIDEO]
+      )
+
     const [, , , , , , , updatedProfile] = await prisma.$transaction([
       ...tagsToRemove.map((tagId) =>
         prisma.profileTag.deleteMany({
@@ -337,7 +349,10 @@ export async function PUT(req: NextRequest) {
       ),
       prisma.profile.update({
         where: { id },
-        data: profileData as any,
+        data: {
+          ...profileData,
+          hasVideo,
+        },
       }),
     ])
 
