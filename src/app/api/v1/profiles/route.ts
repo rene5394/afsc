@@ -302,7 +302,7 @@ export async function GET(req: NextRequest) {
       where: whereClause,
       skip: skip,
       take: ITEMS_PER_PAGE,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ hasVideo: 'desc' }, { createdAt: 'desc' }],
       include: {
         ProfileTag: {
           include: {
