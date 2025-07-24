@@ -10,12 +10,13 @@ const WelcomeSection: React.FC = () => {
           alt='Logo'
         />
         <p className='max-w-4xl lg:text-xl text-l mx-auto'>
-          Discover the narratives of immigrants globally, individuals who have
-          pursued a brighter future for themselves and their loved ones.
-          Regardless of nationality, language, or age, migration touches us all.
-          It&apos;s about people striving to enhance their lives, displaying
-          resilience in the face of challenges, and persistently seeking
-          opportunities to thrive and express their humanity.
+          Migration impacts everyone, regardless of nationality, language, or
+          age. Traces follows the journeys of migrants who left their homes,
+          sometimes to purse brighter futures, careers, opportunities, most
+          times because they had no other choice. The stories captured show
+          people striving to enhance their lives, displaying resilience in the
+          face of challenges, and persistently seeking opportunities to thrive
+          and demand that their humanity is not up to the discretion of power.
         </p>
       </div>
     </section>
