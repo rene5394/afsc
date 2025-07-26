@@ -12,7 +12,7 @@ const WelcomeSection: React.FC = () => {
         <p className='max-w-4xl lg:text-xl text-l mx-auto'>
           Migration impacts everyone, regardless of nationality, language, or
           age. Traces follows the journeys of migrants who left their homes,
-          sometimes to purse brighter futures, careers, opportunities, most
+          sometimes to pursue brighter futures, careers, opportunities, most
           times because they had no other choice. The stories captured show
           people striving to enhance their lives, displaying resilience in the
           face of challenges, and persistently seeking opportunities to thrive
